@@ -51,21 +51,24 @@ class UiForm(object):
         self.width_ratio = form.width() / 565
         self.height_ratio = form.height() / 399
         # Creating the widgets
-        setup_widget(self.jumpers, self.ratio_alter(20, 10, 131, 14), 'jumpers')
-        setup_widget(self.jumps, self.ratio_alter(20, 34, 131, 340), 'jumps')
-        setup_widget(self.choices, self.ratio_alter(20, 34, 131, 340), 'choices')
-        setup_widget(self.jumpCP, self.ratio_alter(169, 10, 75, 14), 'jumpCP')
-        setup_widget(self.choiceCP, self.ratio_alter(466, 10, 75, 14), 'choiceCP')
-        setup_widget(self.chained, self.ratio_alter(169, 27, 75, 14), 'chained')
-        setup_widget(self.active, self.ratio_alter(466, 27, 75, 14), 'active')
-        setup_widget(self.mainInfo, self.ratio_alter(169, 44, 372, 230), 'mainInfo')
-        setup_widget(self.secondInfo, self.ratio_alter(169, 284, 372, 90), 'secondInfo')
+        setup_widget(self.jumpers, self.ratio_alter(20, 10, 75, 14), 'jumpers')
+        setup_widget(self.jumps, self.ratio_alter(20, 34, 75, 340), 'jumps')
+        setup_widget(self.choices, self.ratio_alter(100, 34, 75, 340), 'choices')
+        setup_widget(self.jumpCP, self.ratio_alter(100, 10, 75, 14), 'jumpCP')
+        setup_widget(self.choiceCP, self.ratio_alter(477, 10, 75, 14), 'choiceCP')
+        setup_widget(self.chained, self.ratio_alter(180, 10, 75, 14), 'chained')
+        setup_widget(self.active, self.ratio_alter(220, 10, 75, 14), 'active')
+        setup_widget(self.mainInfo, self.ratio_alter(180, 34, 372, 240), 'mainInfo')
+        setup_widget(self.secondInfo, self.ratio_alter(180, 284, 372, 90), 'secondInfo')
         # Adding text to lists
         for i in range(len(self.info.jumpers)):
             self.jumpers.addItem(self.info.jumpers[i])
         for i in range(len(self.info.jumps)):
             self.jumps.addItem(self.info.jumps[i])
         self.jumps.clicked.connect(self.clickedJump)
+        # Adding text to checkboxes
+        self.chained.setText("Chained")
+        self.active.setText("Active")
 
     def clickedJump(self):
         item = self.jumps.currentItem()
