@@ -20,14 +20,15 @@ class UiForm(object):
         self.width_ratio = 1
         self.height_ratio = 1
         # Establishing base widgets
-        self.comboBox = QtWidgets.QComboBox(form)
-        self.plainTextEdit_1 = QtWidgets.QPlainTextEdit(form)
-        self.plainTextEdit_2 = QtWidgets.QPlainTextEdit(form)
-        self.listBox = QtWidgets.QListWidget(form)
-        self.lineEdit_1 = QtWidgets.QLineEdit(form)
-        self.lineEdit_2 = QtWidgets.QLineEdit(form)
-        self.checkbox_1 = QtWidgets.QCheckBox(form)
-        self.checkbox_2 = QtWidgets.QCheckBox(form)
+        self.jumpers = QtWidgets.QComboBox(form)
+        self.mainInfo = QtWidgets.QPlainTextEdit(form)
+        self.secondInfo = QtWidgets.QPlainTextEdit(form)
+        self.jumps = QtWidgets.QListWidget(form)
+        self.choices = QtWidgets.QListWidget(form)
+        self.jumpCP = QtWidgets.QLineEdit(form)
+        self.choiceCP = QtWidgets.QLineEdit(form)
+        self.chained = QtWidgets.QCheckBox(form)
+        self.active = QtWidgets.QCheckBox(form)
 
     def ratio_alter(self, x, y, width, height):
         """Return coordinates and dimensions altered by the form size"""
@@ -50,23 +51,24 @@ class UiForm(object):
         self.width_ratio = form.width() / 565
         self.height_ratio = form.height() / 399
         # Creating the widgets
-        setup_widget(self.comboBox, self.ratio_alter(20, 10, 131, 14), 'comboBox')
-        setup_widget(self.listBox, self.ratio_alter(20, 34, 131, 340), 'listBox')
-        setup_widget(self.lineEdit_1, self.ratio_alter(169, 10, 75, 14), 'lineEdit_1')
-        setup_widget(self.lineEdit_2, self.ratio_alter(466, 10, 75, 14), 'lineEdit_2')
-        setup_widget(self.checkbox_1, self.ratio_alter(169, 27, 75, 14), 'checkbox_1')
-        setup_widget(self.checkbox_2, self.ratio_alter(466, 27, 75, 14), 'checkbox_2')
-        setup_widget(self.plainTextEdit_1, self.ratio_alter(169, 44, 372, 230), 'plainTextEdit_1')
-        setup_widget(self.plainTextEdit_2, self.ratio_alter(169, 284, 372, 90), 'plainTextEdit_2')
+        setup_widget(self.jumpers, self.ratio_alter(20, 10, 131, 14), 'jumpers')
+        setup_widget(self.jumps, self.ratio_alter(20, 34, 131, 340), 'jumps')
+        setup_widget(self.choices, self.ratio_alter(20, 34, 131, 340), 'choices')
+        setup_widget(self.jumpCP, self.ratio_alter(169, 10, 75, 14), 'jumpCP')
+        setup_widget(self.choiceCP, self.ratio_alter(466, 10, 75, 14), 'choiceCP')
+        setup_widget(self.chained, self.ratio_alter(169, 27, 75, 14), 'chained')
+        setup_widget(self.active, self.ratio_alter(466, 27, 75, 14), 'active')
+        setup_widget(self.mainInfo, self.ratio_alter(169, 44, 372, 230), 'mainInfo')
+        setup_widget(self.secondInfo, self.ratio_alter(169, 284, 372, 90), 'secondInfo')
         # Adding text to lists
         for i in range(len(self.info.jumpers)):
-            self.comboBox.addItem(self.info.jumpers[i])
+            self.jumpers.addItem(self.info.jumpers[i])
         for i in range(len(self.info.jumps)):
-            self.listBox.addItem(self.info.jumps[i])
-        self.listBox.clicked.connect(self.clicked)
+            self.jumps.addItem(self.info.jumps[i])
+        self.jumps.clicked.connect(self.clickedJump)
 
-
-    def clicked(self):
-        item = self.listBox.currentItem()
+    def clickedJump(self):
+        item = self.jumps.currentItem()
+        jump = self.info.getJump(item.text())
 
 

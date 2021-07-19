@@ -12,9 +12,13 @@ class Info:
         self.jumpers = os.listdir(self.jumperPath)
         self.remove(self.jumpers, 4)
 
+        self.file = self.jumpPath
+
     @staticmethod
     def remove(group, digits):
         for unit in group:
             group[group.index(unit)] = unit[:-digits]
 
 
+    def getJump(self, jump):
+        self.file = self.jumpPath + jump
