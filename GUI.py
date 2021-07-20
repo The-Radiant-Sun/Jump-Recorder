@@ -61,17 +61,20 @@ class UiForm(object):
         setup_widget(self.mainInfo, self.ratio_alter(180, 34, 372, 240), 'mainInfo')
         setup_widget(self.secondInfo, self.ratio_alter(180, 284, 372, 90), 'secondInfo')
         # Adding text to lists
-        for i in range(len(self.info.jumpers)):
-            self.jumpers.addItem(self.info.jumpers[i])
-        for i in range(len(self.info.jumps)):
-            self.jumps.addItem(self.info.jumps[i])
-        self.jumps.clicked.connect(self.clickedJump)
+        self.jumpers.addItems(self.info.jumpers)
+        self.jumps.addItems(self.info.jumps)
         # Adding text to checkboxes
         self.chained.setText("Chained")
         self.active.setText("Active")
 
+        self.jumpers.currentIndexChanged.connect(self.clickedJumper)
+        self.jumps.clicked.connect(self.clickedJump)
+
+    def clickedJumper(self):
+        self.jumps.clear()
+        self.info.getJumper(self.jumpers.currentText())
+        self.jumps.addItems(self.info.jumps)
+
     def clickedJump(self):
         item = self.jumps.currentItem()
         jump = self.info.getJump(item.text())
-
-

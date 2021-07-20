@@ -3,14 +3,14 @@ import os
 
 class Info:
     def __init__(self):
-        self.jumpPath = 'Info/Jumps'
         self.jumperPath = 'Info/Jumpers'
 
-        self.jumps = os.listdir(self.jumpPath)
-        self.remove(self.jumps, 4)
-
         self.jumpers = os.listdir(self.jumperPath)
-        self.remove(self.jumpers, 4)
+
+        self.jumpPath = self.jumpers[0]
+
+        self.jumps = os.listdir(self.jumperPath + '/' + self.jumpPath)
+        self.remove(self.jumps, 4)
 
         self.file = self.jumpPath
 
@@ -19,6 +19,10 @@ class Info:
         for unit in group:
             group[group.index(unit)] = unit[:-digits]
 
+    def getJumper(self, jumper):
+        self.jumpPath = jumper
+        self.jumps = os.listdir(self.jumperPath + '/' + self.jumpPath)
+        self.remove(self.jumps, 4)
 
     def getJump(self, jump):
-        self.file = self.jumpPath + jump
+        self.file = self.jumpPath + jump + ".txt"
