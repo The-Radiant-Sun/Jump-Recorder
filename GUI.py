@@ -31,6 +31,7 @@ class UiForm(object):
         self.chained = QtWidgets.QCheckBox(form)
         self.active = QtWidgets.QCheckBox(form)
         self.changeType = QtWidgets.QComboBox(form)
+        self.changeButton = QtWidgets.QPushButton(form)
         self.jumpName = QtWidgets.QLineEdit(form)
         self.choiceName = QtWidgets.QLineEdit(form)
 
@@ -62,8 +63,9 @@ class UiForm(object):
         setup_widget(self.jumpCP, self.ratio_alter(170, 10, 75, 14), 'jumpCP')
 
         setup_widget(self.changeType, self.ratio_alter(90, 10, 75, 14), 'changeType')
+        setup_widget(self.changeButton, self.ratio_alter(90, 29, 75, 14), 'changeButton')
 
-        setup_widget(self.choices, self.ratio_alter(90, 29, 75, 335.5), 'choices')
+        setup_widget(self.choices, self.ratio_alter(90, 48, 75, 335.5), 'choices')
         setup_widget(self.choiceName, self.ratio_alter(300, 29, 252, 14), 'choiceName')
         setup_widget(self.choiceCP, self.ratio_alter(477, 10, 75, 14), 'choiceCP')
         setup_widget(self.choiceType, self.ratio_alter(250, 10, 150, 14), 'choiceType')
@@ -76,15 +78,17 @@ class UiForm(object):
         # Adding text to lists
         self.jumpers.addItems(self.info.jumpers)
         self.jumps.addItems(self.info.jumps)
-        self.changeType.addItems(['Add Jump', 'Add Choice', 'Rename Jump'])
+        self.changeType.addItems(['Add Jump', 'Add Choice', 'Rename Jump', 'Rename Choice'])
         self.choiceType.addItems(['Origin', 'Perk', 'Item', 'Companion', 'Drawback', 'Scenario', 'Other'])
         # Adding text to others
         self.active.setText("Active")
         self.chained.setText("Chained")
+        self.changeButton.setText(self.changeType.currentText())
         # Connecting to the different lists
         self.jumpers.currentIndexChanged.connect(self.clickedJumper)
         self.jumps.clicked.connect(self.clickedJump)
         self.changeType.currentIndexChanged.connect(self.clickedChangeType)
+        self.changeButton.clicked.connect(self.clickedChangeButton)
 
     def clickedJumper(self):
         self.jumps.clear()
@@ -97,15 +101,15 @@ class UiForm(object):
         self.info.getJumpOptions()
 
     def clickedChangeButton(self):
-        self.info.addJump()
-        self.jumps.setCurrentItem(self.jumps[-1])
-
-    def clickedChangeType(self):
         text = self.changeType.currentText()
         if text == 'Add Jump':
             self.info.addJump()
-        if text == 'Add Choice':
+        elif text == 'Add Choice':
             self.info.addChoice()
-        if text == 'Rename Jump' and self.jumpName != '':
-            self.info.renameJump(self.jumpName)
+        elif text == 'Rename Jump' and self.jumpName.text() != '':
+            self.info.renameJump(self.jumpName.text())
+        elif text  == 'Rename Choice' and self.choiceName != '':
+            self.info.renameChoice(self.choiceName.text())
 
+    def clickedChangeType(self):
+        self.changeButton.setText(self.changeType.currentText())

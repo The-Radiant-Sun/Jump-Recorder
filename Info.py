@@ -56,13 +56,11 @@ class Info:
 
     def renameJump(self, newName):
         try:
-            print(1)
             self.file.close()
-            print(2)
-            print(self.jump + '\n')
+            print(self.jump)
             print(self.pathConnect(self.jumperPath, newName + ".csv"))
             os.rename(self.jump, self.pathConnect(self.jumperPath, newName + ".csv"))
-            print(3)
+            self.jump = self.pathConnect(self.jumperPath, newName + ".csv")
             self.getJumpOptions()
         except TypeError:
             """Do nothing"""
