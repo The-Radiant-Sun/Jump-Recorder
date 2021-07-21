@@ -50,7 +50,19 @@ class Info:
             self.file = open(self.jump, mode='r')
             self.jumpOptions = csv.reader(self.file)
             self.file = open(self.jump, mode='w+')
-            print(self.jumpOptions)
         except BaseException:
             thisIsLiterallyImpossible = True  # Read name of variable
             quit()
+
+    def renameJump(self, newName):
+        try:
+            print(1)
+            self.file.close()
+            print(2)
+            print(self.jump + '\n')
+            print(self.pathConnect(self.jumperPath, newName + ".csv"))
+            os.rename(self.jump, self.pathConnect(self.jumperPath, newName + ".csv"))
+            print(3)
+            self.getJumpOptions()
+        except TypeError:
+            """Do nothing"""

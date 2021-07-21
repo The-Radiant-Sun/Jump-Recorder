@@ -30,6 +30,9 @@ class UiForm(object):
         self.choiceType = QtWidgets.QComboBox(form)
         self.chained = QtWidgets.QCheckBox(form)
         self.active = QtWidgets.QCheckBox(form)
+        self.changeType = QtWidgets.QComboBox(form)
+        self.jumpName = QtWidgets.QLineEdit(form)
+        self.choiceName = QtWidgets.QLineEdit(form)
 
     def ratio_alter(self, x, y, width, height):
         """Return coordinates and dimensions altered by the form size"""
@@ -52,25 +55,36 @@ class UiForm(object):
         self.width_ratio = form.width() / 565
         self.height_ratio = form.height() / 399
         # Creating the widgets
-        setup_widget(self.jumpers, self.ratio_alter(20, 10, 75, 14), 'jumpers')
-        setup_widget(self.jumps, self.ratio_alter(20, 34, 75, 340), 'jumps')
-        setup_widget(self.choices, self.ratio_alter(100, 34, 75, 340), 'choices')
-        setup_widget(self.jumpCP, self.ratio_alter(100, 10, 75, 14), 'jumpCP')
+        setup_widget(self.jumpers, self.ratio_alter(10, 10, 75, 14), 'jumpers')
+
+        setup_widget(self.jumps, self.ratio_alter(10, 29, 75, 335.5), 'jumps')
+        setup_widget(self.jumpName, self.ratio_alter(170, 29, 125, 14), 'jumpName')
+        setup_widget(self.jumpCP, self.ratio_alter(170, 10, 75, 14), 'jumpCP')
+
+        setup_widget(self.changeType, self.ratio_alter(90, 10, 75, 14), 'changeType')
+
+        setup_widget(self.choices, self.ratio_alter(90, 29, 75, 335.5), 'choices')
+        setup_widget(self.choiceName, self.ratio_alter(300, 29, 252, 14), 'choiceName')
         setup_widget(self.choiceCP, self.ratio_alter(477, 10, 75, 14), 'choiceCP')
-        setup_widget(self.choiceType, self.ratio_alter(180, 10, 150, 14), 'choiceType')
-        setup_widget(self.active, self.ratio_alter(335, 10, 50, 14), 'active')
-        setup_widget(self.chained, self.ratio_alter(365, 10, 50, 14), 'chained')
-        setup_widget(self.mainInfo, self.ratio_alter(180, 34, 372, 240), 'mainInfo')
-        setup_widget(self.secondInfo, self.ratio_alter(180, 284, 372, 90), 'secondInfo')
+        setup_widget(self.choiceType, self.ratio_alter(250, 10, 150, 14), 'choiceType')
+
+        setup_widget(self.active, self.ratio_alter(405, 10, 50, 14), 'active')
+        setup_widget(self.chained, self.ratio_alter(435, 10, 50, 14), 'chained')
+
+        setup_widget(self.mainInfo, self.ratio_alter(170, 48, 382, 221), 'mainInfo')
+        setup_widget(self.secondInfo, self.ratio_alter(170, 274, 382, 90), 'secondInfo')
         # Adding text to lists
         self.jumpers.addItems(self.info.jumpers)
         self.jumps.addItems(self.info.jumps)
-        # Adding text to checkboxes
+        self.changeType.addItems(['Add Jump', 'Add Choice', 'Rename Jump'])
+        self.choiceType.addItems(['Origin', 'Perk', 'Item', 'Companion', 'Drawback', 'Scenario', 'Other'])
+        # Adding text to others
         self.active.setText("Active")
         self.chained.setText("Chained")
-
+        # Connecting to the different lists
         self.jumpers.currentIndexChanged.connect(self.clickedJumper)
         self.jumps.clicked.connect(self.clickedJump)
+        self.changeType.currentIndexChanged.connect(self.clickedChangeType)
 
     def clickedJumper(self):
         self.jumps.clear()
@@ -81,4 +95,17 @@ class UiForm(object):
         item = self.jumps.currentItem()
         self.info.getJump(item.text())
         self.info.getJumpOptions()
+
+    def clickedChangeButton(self):
+        self.info.addJump()
+        self.jumps.setCurrentItem(self.jumps[-1])
+
+    def clickedChangeType(self):
+        text = self.changeType.currentText()
+        if text == 'Add Jump':
+            self.info.addJump()
+        if text == 'Add Choice':
+            self.info.addChoice()
+        if text == 'Rename Jump' and self.jumpName != '':
+            self.info.renameJump(self.jumpName)
 
