@@ -1,7 +1,6 @@
 import os
-import csv
 
-FileOrder = ['Name', 'Type', 'CP Change', 'Active', 'Chained', 'Description']
+FileOrder = ['Name', 'Type', 'CP Change', 'Active', 'Chained', 'Description', 'Notes']
 
 class Info:
     def __init__(self):
@@ -11,8 +10,7 @@ class Info:
 
         self.jumperPath = self.pathConnect(self.path, self.jumpers[0])
 
-        self.jumps = os.listdir(self.jumperPath)
-        self.remove(self.jumps, 4)
+        self.jumps = self.remove(os.listdir(self.jumperPath), 4)
 
         self.jump = self.jumperPath
 
@@ -32,6 +30,7 @@ class Info:
     def remove(group, digits):
         for unit in group:
             group[group.index(unit)] = unit[:-digits]
+        return group
 
     @staticmethod
     def pathConnect(branch, subBranch):
@@ -48,8 +47,14 @@ class Info:
     def getJumpOptions(self):
         try:
             self.file = open(self.jump, mode='r')
-            self.jumpOptions = csv.reader(self.file)
+            self.jumpOptions = [option.split(',,') for option in self.remove(self.file.readlines(), 2)]
             self.file = open(self.jump, mode='w+')
+            print(self.jumpOptions)
+            for row in self.jumpOptions:
+                for column in row:
+                    self.file.write(column + ('\n' if column == row[-1] else ',,'))
+                    print(column + ('\n' if column == row[-1] else ',,'))
+                    print(self.file.readlines())
         except BaseException:
             thisIsLiterallyImpossible = True  # Read name of variable
             quit()

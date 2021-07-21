@@ -65,7 +65,7 @@ class UiForm(object):
         setup_widget(self.changeType, self.ratio_alter(90, 10, 75, 14), 'changeType')
         setup_widget(self.changeButton, self.ratio_alter(90, 29, 75, 14), 'changeButton')
 
-        setup_widget(self.choices, self.ratio_alter(90, 48, 75, 335.5), 'choices')
+        setup_widget(self.choices, self.ratio_alter(90, 48, 75, 316.5), 'choices')
         setup_widget(self.choiceName, self.ratio_alter(300, 29, 252, 14), 'choiceName')
         setup_widget(self.choiceCP, self.ratio_alter(477, 10, 75, 14), 'choiceCP')
         setup_widget(self.choiceType, self.ratio_alter(250, 10, 150, 14), 'choiceType')
@@ -84,11 +84,13 @@ class UiForm(object):
         self.active.setText("Active")
         self.chained.setText("Chained")
         self.changeButton.setText(self.changeType.currentText())
-        # Connecting to the different lists
+        # Connecting to the different widgets
         self.jumpers.currentIndexChanged.connect(self.clickedJumper)
         self.jumps.clicked.connect(self.clickedJump)
         self.changeType.currentIndexChanged.connect(self.clickedChangeType)
         self.changeButton.clicked.connect(self.clickedChangeButton)
+        self.mainInfo.textChanged.connect(self.mainInfoChanged)
+        self.secondInfo.textChanged.connect(self.secondInfoChanged)
 
     def clickedJumper(self):
         self.jumps.clear()
@@ -108,8 +110,14 @@ class UiForm(object):
             self.info.addChoice()
         elif text == 'Rename Jump' and self.jumpName.text() != '':
             self.info.renameJump(self.jumpName.text())
-        elif text  == 'Rename Choice' and self.choiceName != '':
+        elif text == 'Rename Choice' and self.choiceName != '':
             self.info.renameChoice(self.choiceName.text())
 
     def clickedChangeType(self):
         self.changeButton.setText(self.changeType.currentText())
+
+    def mainInfoChanged(self):
+        print("main change")
+
+    def secondInfoChanged(self):
+        print("second change")
