@@ -27,6 +27,7 @@ class UiForm(object):
         self.choices = QtWidgets.QListWidget(form)
         self.jumpCP = QtWidgets.QLineEdit(form)
         self.choiceCP = QtWidgets.QLineEdit(form)
+        self.choiceType = QtWidgets.QComboBox(form)
         self.chained = QtWidgets.QCheckBox(form)
         self.active = QtWidgets.QCheckBox(form)
 
@@ -56,16 +57,17 @@ class UiForm(object):
         setup_widget(self.choices, self.ratio_alter(100, 34, 75, 340), 'choices')
         setup_widget(self.jumpCP, self.ratio_alter(100, 10, 75, 14), 'jumpCP')
         setup_widget(self.choiceCP, self.ratio_alter(477, 10, 75, 14), 'choiceCP')
-        setup_widget(self.chained, self.ratio_alter(180, 10, 75, 14), 'chained')
-        setup_widget(self.active, self.ratio_alter(220, 10, 75, 14), 'active')
+        setup_widget(self.choiceType, self.ratio_alter(180, 10, 150, 14), 'choiceType')
+        setup_widget(self.active, self.ratio_alter(335, 10, 50, 14), 'active')
+        setup_widget(self.chained, self.ratio_alter(365, 10, 50, 14), 'chained')
         setup_widget(self.mainInfo, self.ratio_alter(180, 34, 372, 240), 'mainInfo')
         setup_widget(self.secondInfo, self.ratio_alter(180, 284, 372, 90), 'secondInfo')
         # Adding text to lists
         self.jumpers.addItems(self.info.jumpers)
         self.jumps.addItems(self.info.jumps)
         # Adding text to checkboxes
-        self.chained.setText("Chained")
         self.active.setText("Active")
+        self.chained.setText("Chained")
 
         self.jumpers.currentIndexChanged.connect(self.clickedJumper)
         self.jumps.clicked.connect(self.clickedJump)
@@ -77,4 +79,6 @@ class UiForm(object):
 
     def clickedJump(self):
         item = self.jumps.currentItem()
-        jump = self.info.getJump(item.text())
+        self.info.getJump(item.text())
+        self.info.getJumpOptions()
+
