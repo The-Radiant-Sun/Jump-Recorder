@@ -48,17 +48,13 @@ class Info:
         try:
             self.file = open(self.jump, mode='r')
             self.jumpOptions = self.file.readlines()
-            self.jumpOptions = [self.remove(self.jumpOptions[:-1], 2), [self.jumpOptions[-1]]]
+            self.jumpOptions = [self.remove(self.jumpOptions[:-1], 1), [self.jumpOptions[-1]]]
             self.jumpOptions = [option[0].split(',,') for option in self.jumpOptions]
             self.file = open(self.jump, mode='w+')
-            self.file.write('here')
-            print(self.file.readlines())
             for row in self.jumpOptions:
                 for column in row:
-                    self.file.write(column + ('\n' if column == row[-1] else ',,'))
-                    print(column + ('\n' if column == row[-1] else ',,'))
-                    print(self.file.readlines())
-            self.file.write('here again')
+                    self.file.write(column + (('\n' if row != self.jumpOptions[-1] else '') if column == row[-1] else ',,'))
+                    self.file.flush()
         except BaseException:
             thisIsLiterallyImpossible = True  # Read name of variable
             quit()
