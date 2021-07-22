@@ -78,7 +78,7 @@ class UiForm(object):
         # Adding text to lists
         self.jumpers.addItems(self.info.jumpers)
         self.jumps.addItems(self.info.jumps)
-        self.changeType.addItems(['Add Jump', 'Add Choice', 'Rename Jump', 'Rename Choice'])
+        self.changeType.addItems(['Add Jump', 'Add Choice'])
         self.choiceType.addItems(['Origin', 'Perk', 'Item', 'Companion', 'Drawback', 'Scenario', 'Other'])
         # Adding text to others
         self.active.setText("Active")
@@ -87,8 +87,14 @@ class UiForm(object):
         # Connecting to the different widgets
         self.jumpers.currentIndexChanged.connect(self.clickedJumper)
         self.jumps.clicked.connect(self.clickedJump)
+        self.choices.clicked.connect(self.clickedChoice)
+
         self.changeType.currentIndexChanged.connect(self.clickedChangeType)
         self.changeButton.clicked.connect(self.clickedChangeButton)
+
+        self.jumpName.textChanged.connect(self.jumpNameChanged)
+        self.choiceName.textChanged.connect(self.choiceNameChanged)
+
         self.mainInfo.textChanged.connect(self.mainInfoChanged)
         self.secondInfo.textChanged.connect(self.secondInfoChanged)
 
@@ -98,9 +104,28 @@ class UiForm(object):
         self.jumps.addItems(self.info.jumps)
 
     def clickedJump(self):
-        item = self.jumps.currentItem()
-        self.info.getJump(item.text())
-        self.info.getJumpOptions()
+        item = self.jumps.currentItem().text()
+        self.info.getJump(item)
+
+        self.jumpName.setText(item)
+
+        self.choices.clear()
+        self.choices.addItems(name[0] for name in self.info.jumpOptions[1:])
+
+    def clickedChoice(self):
+        item = self.choices.currentItem().text()
+        self.info.getChoice(item)
+
+        self.choiceName.setText(item)
+        print(1)
+        self.choiceCP.setText(str(self.info.choiceCP) + ' CP')
+        self.choiceType.setCurrentIndex(self.info.choiceType)
+
+        self.mainInfo.setPlainText(self.info.choiceDescription)
+        self.secondInfo.setPlainText(self.info.choiceNotes)
+
+        self.active.setChecked(self.info.choiceActive)
+        self.chained.setChecked(self.info.choiceChained)
 
     def clickedChangeButton(self):
         text = self.changeType.currentText()
@@ -108,10 +133,13 @@ class UiForm(object):
             self.info.addJump()
         elif text == 'Add Choice':
             self.info.addChoice()
-        elif text == 'Rename Jump' and self.jumpName.text() != '':
-            self.info.renameJump(self.jumpName.text())
-        elif text == 'Rename Choice' and self.choiceName != '':
-            self.info.renameChoice(self.choiceName.text())
+
+    def jumpNameChanged(self):
+        self.info.renameJump(self.jumpName.text())
+        self.jumps.currentItem().setText(self.jumpName.text())
+
+    def choiceNameChanged(self):
+        self.info.renameChoice(self.choices.currentIndex(), self.choiceName.text())
 
     def clickedChangeType(self):
         self.changeButton.setText(self.changeType.currentText())

@@ -19,12 +19,12 @@ class Info:
         self.jumpOptions = None
         self.jumpCP = None
 
-        self.choiceName = 'Unknown'
-        self.choiceType = 'Unknown'
+        self.choiceType = 0
         self.choiceCP = 0
-        self.active = False
-        self.chained = False
-        self.description = 'Unknown'
+        self.choiceActive = False
+        self.choiceChained = False
+        self.choiceDescription = 'Unknown'
+        self.choiceNotes = 'Unknown'
 
     @staticmethod
     def remove(group, digits):
@@ -43,6 +43,7 @@ class Info:
 
     def getJump(self, jump):
         self.jump = self.pathConnect(self.jumperPath, jump + ".csv")
+        self.getJumpOptions()
 
     def getJumpOptions(self):
         try:
@@ -55,17 +56,29 @@ class Info:
                 for column in row:
                     self.file.write(column + (('\n' if row != self.jumpOptions[-1] else '') if column == row[-1] else ',,'))
                     self.file.flush()
-        except BaseException:
+        except Exception:
+            thisIsLiterallyImpossible = True  # Read name of variable
+            quit()
+
+    def getChoice(self, choice):
+        try:
+            a = 'b'
+        except Exception:
             thisIsLiterallyImpossible = True  # Read name of variable
             quit()
 
     def renameJump(self, newName):
         try:
             self.file.close()
-            print(self.jump)
-            print(self.pathConnect(self.jumperPath, newName + ".csv"))
             os.rename(self.jump, self.pathConnect(self.jumperPath, newName + ".csv"))
             self.jump = self.pathConnect(self.jumperPath, newName + ".csv")
+            self.getJumpOptions()
+        except TypeError:
+            """Do nothing"""
+
+    def renameChoice(self, choice, newName):
+        try:
+            # Add filling
             self.getJumpOptions()
         except TypeError:
             """Do nothing"""
