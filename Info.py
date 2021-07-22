@@ -14,10 +14,10 @@ class Info:
 
         self.jump = self.jumperPath
 
-        self.file = ''
+        self.file = None
 
-        self.jumpOptions = ''
-        self.jumpCP = 1000
+        self.jumpOptions = None
+        self.jumpCP = None
 
         self.choiceName = 'Unknown'
         self.choiceType = 'Unknown'
@@ -47,14 +47,18 @@ class Info:
     def getJumpOptions(self):
         try:
             self.file = open(self.jump, mode='r')
-            self.jumpOptions = [option.split(',,') for option in self.remove(self.file.readlines(), 2)]
+            self.jumpOptions = self.file.readlines()
+            self.jumpOptions = [self.remove(self.jumpOptions[:-1], 2), [self.jumpOptions[-1]]]
+            self.jumpOptions = [option[0].split(',,') for option in self.jumpOptions]
             self.file = open(self.jump, mode='w+')
-            print(self.jumpOptions)
+            self.file.write('here')
+            print(self.file.readlines())
             for row in self.jumpOptions:
                 for column in row:
                     self.file.write(column + ('\n' if column == row[-1] else ',,'))
                     print(column + ('\n' if column == row[-1] else ',,'))
                     print(self.file.readlines())
+            self.file.write('here again')
         except BaseException:
             thisIsLiterallyImpossible = True  # Read name of variable
             quit()
