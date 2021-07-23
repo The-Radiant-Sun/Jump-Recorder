@@ -77,8 +77,8 @@ class UiForm(object):
         setup_widget(self.choiceCP, self.ratio_alter(477, 10, 75, 14), 'choiceCP')
         setup_widget(self.choiceType, self.ratio_alter(250, 10, 150, 14), 'choiceType')
 
-        setup_widget(self.active, self.ratio_alter(405, 10, 50, 14), 'active')
-        setup_widget(self.chained, self.ratio_alter(435, 10, 50, 14), 'chained')
+        setup_widget(self.active, self.ratio_alter(405, 10, 30, 14), 'active')
+        setup_widget(self.chained, self.ratio_alter(435, 10, 35, 14), 'chained')
 
         setup_widget(self.mainInfo, self.ratio_alter(170, 48, 382, 221), 'mainInfo')
         setup_widget(self.secondInfo, self.ratio_alter(170, 274, 382, 90), 'secondInfo')
@@ -100,10 +100,16 @@ class UiForm(object):
         self.changeButton.clicked.connect(self.clickedChangeButton)
 
         self.jumpName.textChanged.connect(self.jumpNameChanged)
+
         self.choiceName.textChanged.connect(self.choiceNameChanged)
+        self.choiceType.currentIndexChanged.connect(self.choiceTypeChanged)
+        self.choiceCP.textChanged.connect(self.choiceCPChanged)
 
         self.mainInfo.textChanged.connect(self.mainInfoChanged)
         self.secondInfo.textChanged.connect(self.secondInfoChanged)
+
+        self.active.stateChanged.connect(self.activeChanged)
+        self.chained.stateChanged.connect(self.chainedChanged)
 
     def clickedJumper(self):
         self.jumps.clear()
@@ -124,7 +130,7 @@ class UiForm(object):
         self.info.getChoice(self.choices.currentRow())
 
         self.choiceName.setText(item)
-        self.choiceCP.setText(str(self.info.choiceCP) + ' CP')
+        self.choiceCP.setText(self.info.choiceCP)
         self.choiceType.setCurrentIndex(self.info.choiceType)
 
         self.mainInfo.setPlainText(self.info.choiceDescription)
@@ -158,7 +164,11 @@ class UiForm(object):
         self.info.changeNotes(self.choices.currentRow(), self.secondInfo.toPlainText())
 
     def choiceCPChanged(self):
-        self.info.changeCP(self.choices.currentRow(), self.choiceCP.text())
+        try:
+            int(self.choiceCP.text())
+            self.info.changeCP(self.choices.currentRow(), self.choiceCP.text())
+        except Exception:
+            self.choiceCP.setText(self.info.choiceCP)
 
     def choiceTypeChanged(self):
         self.info.changeType(self.choices.currentRow(), self.choiceType.currentIndex())

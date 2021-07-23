@@ -58,7 +58,7 @@ class Info:
 
     def changeJumpOptions(self, choice, section, new):
         try:
-            self.jumpOptions[choice + 1][FileOrder.index(section)] = new
+            self.jumpOptions[choice + 1][FileOrder.index(section)] = str(new)
             self.writeJumpOptions()
         except TypeError:
             """Do nothing"""
@@ -80,8 +80,8 @@ class Info:
             choice = self.jumpOptions[choice + 1]
             self.choiceType = int(choice[FileOrder.index('Type')])
             self.choiceCP = choice[FileOrder.index('CP Change')]
-            self.choiceActive = not bool(choice[FileOrder.index('Active')])
-            self.choiceChained = not bool(choice[FileOrder.index('Chained')])
+            self.choiceActive = bool(choice[FileOrder.index('Active')] == 'True')
+            self.choiceChained = bool(choice[FileOrder.index('Chained')] == 'True')
             self.choiceDescription = choice[FileOrder.index('Description')]
             self.choiceNotes = choice[FileOrder.index('Notes')]
         except Exception:
