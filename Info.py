@@ -2,6 +2,7 @@ import os
 
 FileOrder = ['Name', 'Type', 'CP Change', 'Active', 'Chained', 'Description', 'Notes']
 
+
 class Info:
     def __init__(self):
         self.path = 'Info/Jumpers'
@@ -49,11 +50,11 @@ class Info:
         try:
             self.file = open(self.jump, mode='r')
             self.jumpOptions = self.file.readlines()
-            for option in self.jumpOptions:
+            for i, option in enumerate(self.jumpOptions):
                 if option != self.jumpOptions[-1]:
-                    self.jumpOptions[self.jumpOptions.index(option)] = option[:-1].split(',,')
+                    self.jumpOptions[i] = option[:-1].split(',,')
                 else:
-                    self.jumpOptions[self.jumpOptions.index(option)] = option.split(',,')
+                    self.jumpOptions[i] = option.split(',,')
             self.writeJumpOptions()
         except Exception:
             thisIsLiterallyImpossible = True  # Read name of variable
@@ -69,9 +70,9 @@ class Info:
     def writeJumpOptions(self):
         self.file = open(self.jump, mode='w+')
         try:
-            for row in self.jumpOptions:
-                for column in row:
-                    self.file.write(column + (('\n' if row != self.jumpOptions[-1] else '') if column == row[-1] else ',,'))
+            for x, row in enumerate(self.jumpOptions):
+                for y, column in enumerate(row):
+                    self.file.write(column + (('\n' if x + 1 != len(self.jumpOptions) else '') if y + 1 == len(row) else ',,'))
                     self.file.flush()
         except Exception:
             thisIsLiterallyImpossible = True  # Read name of variable
@@ -88,6 +89,7 @@ class Info:
             self.choiceDescription = choice[FileOrder.index('Description')]
             self.choiceNotes = choice[FileOrder.index('Notes')]
         except Exception:
+            print(1)
             thisIsLiterallyImpossible = True  # Read name of variable
             quit()
 
