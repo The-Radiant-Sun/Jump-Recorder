@@ -149,12 +149,17 @@ class UiForm(object):
         elif text == 'Delete Jumper' and self.confirm(text):
             self.info.deleteJumper()
         elif text == 'Delete Jump' and self.confirm(text):
+            currentRow = self.jumps.currentRow()
             self.info.deleteJump()
+            self.clickedJumper()
+            self.jumps.setCurrentRow(currentRow - 1)
+            self.clickedJump()
         elif text == 'Delete Choice' and self.confirm(text):
             self.info.deleteChoice(self.choices.currentRow())
             self.clickedJump()
 
-    def confirm(self, text):
+    @staticmethod
+    def confirm(text):
         check = QtWidgets.QMessageBox
         return check.Yes == check.question(QtWidgets.QWidget(), 'Confirmation Question', 'Are you sure you want to {}?'.format(text.lower()), check.Yes | check.No, check.No)
 
@@ -188,6 +193,7 @@ class UiForm(object):
 
     def activeChanged(self):
         self.info.changeActive(self.choices.currentRow(), self.active.isChecked())
+        self.jumpCP.setText(self.info.jumpCP)
 
     def chainedChanged(self):
         self.info.changeChained(self.choices.currentRow(), self.chained.isChecked())

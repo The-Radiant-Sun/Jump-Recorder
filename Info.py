@@ -131,7 +131,7 @@ class Info:
         self.writeJumpChoices()
 
     def getTotalCP(self):
-        self.jumpCP = str(sum([int((choice[FileOrder.index('CP Change')]) if choice[FileOrder.index('CP Change')] != '' else 0) for choice in self.jumpChoices[1:]]))
+        self.jumpCP = str(sum([int((choice[FileOrder.index('CP Change')]) if choice[FileOrder.index('CP Change')] != '' and bool(choice[FileOrder.index('Active')] == 'True') else 0) for choice in self.jumpChoices[1:]]))
 
     def renameJump(self, newName):
         try:
@@ -157,6 +157,7 @@ class Info:
     def changeActive(self, choice, newActive):
         self.changeJumpChoices(choice, 'Active', newActive)
         self.choiceActive = bool(newActive)
+        self.getTotalCP()
 
     def changeChained(self, choice, newChained):
         self.changeJumpChoices(choice, 'Chained', newChained)
