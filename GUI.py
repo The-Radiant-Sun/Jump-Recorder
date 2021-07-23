@@ -145,26 +145,26 @@ class UiForm(object):
         self.jumps.currentItem().setText(self.jumpName.text())
 
     def choiceNameChanged(self):
-        self.info.renameChoice(self.choices.currentRow() + 1, self.choiceName.text())
+        self.info.renameChoice(self.choices.currentRow(), self.choiceName.text())
         self.choices.currentItem().setText(self.choiceName.text())
 
     def clickedChangeType(self):
         self.changeButton.setText(self.changeType.currentText())
 
     def mainInfoChanged(self):
-        self.info.changeDescription(self.choices.currentItem(), self.mainInfo.toPlainText())
+        self.info.changeDescription(self.choices.currentRow(), self.mainInfo.toPlainText())
 
     def secondInfoChanged(self):
-        self.info.changeNotes(self.choices.currentItem(), self.secondInfo.toPlainText())
+        self.info.changeNotes(self.choices.currentRow(), self.secondInfo.toPlainText())
 
     def choiceCPChanged(self):
-        self.info.changeCP(self.choices.currentItem(), self.choiceCP.text())
+        self.info.changeCP(self.choices.currentRow(), self.choiceCP.text())
 
     def choiceTypeChanged(self):
-        self.info.changeType(self.choices.currentItem(), self.choiceType.currentIndex())
+        self.info.changeType(self.choices.currentRow(), self.choiceType.currentIndex())
 
     def activeChanged(self):
-        self.info.changeActive(self.choices.currentItem(), self.active.isChecked())
+        self.info.changeActive(self.choices.currentRow(), self.active.isChecked())
 
     def chainedChanged(self):
-        self.info.changeChained(self.choices.currentItem(), self.chained.isChecked())
+        self.info.changeChained(self.choices.currentRow(), self.chained.isChecked())
