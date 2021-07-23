@@ -3,10 +3,16 @@ import os
 FileOrder = ['Name', 'Type', 'CP Change', 'Active', 'Chained', 'Description', 'Notes']
 EmptyFileOrder = ['', '', '', '', '', '', '', '']
 
+FileTree = ['Info/Jumpers', 'Info/Backup/Jumpers', 'Info/Backup/Jumps']
+
 
 class Info:
     def __init__(self):
         self.path = 'Info/Jumpers'
+
+        for tree in FileTree:
+            if not os.path.exists(tree):
+                os.makedirs(tree)
 
         self.jumpers = os.listdir(self.path)
 
@@ -122,6 +128,7 @@ class Info:
     def deleteChoice(self, choice):
         self.getJumpChoices()
         del self.jumpChoices[choice + 1]
+        self.writeJumpChoices()
 
     def getTotalCP(self):
         self.jumpCP = str(sum([int((choice[FileOrder.index('CP Change')]) if choice[FileOrder.index('CP Change')] != '' else 0) for choice in self.jumpChoices[1:]]))
