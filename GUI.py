@@ -85,7 +85,7 @@ class UiForm(object):
         # Adding text to lists
         self.jumpers.addItems(self.info.jumpers)
         self.jumps.addItems(self.info.jumps)
-        self.changeType.addItems(['Add Jump', 'Add Choice'])
+        self.changeType.addItems(['Add Jump', 'Add Choice', 'Delete Choice', 'Delete Jump', 'Delete Jumper'])
         self.choiceType.addItems(['Origin', 'Perk', 'Item', 'Companion', 'Drawback', 'Scenario', 'Other'])
         # Adding text to others
         self.active.setText("Active")
@@ -123,7 +123,7 @@ class UiForm(object):
         self.jumpName.setText(item)
 
         self.choices.clear()
-        self.choices.addItems(name[0] for name in self.info.jumpOptions[1:])
+        self.choices.addItems(name[0] for name in self.info.jumpChoices[1:])
 
     def clickedChoice(self):
         item = self.choices.currentItem().text()
@@ -143,8 +143,20 @@ class UiForm(object):
         text = self.changeType.currentText()
         if text == 'Add Jump':
             self.info.addJump()
+            self.jumps.clear()
+            self.jumps.addItems(self.info.jumps)
         elif text == 'Add Choice':
             self.info.addChoice()
+            self.clickedJump()
+            self.choices.setCurrentRow(len(self.choices))
+        if text == 'Add Jumper':
+            self.info.addJumper()
+        elif text == 'Delete Jumper':
+            self.info.deleteJumper()
+        elif text == 'Delete Jump':
+            self.info.deleteJump()
+        elif text == 'Delete Choice':
+            self.info.deleteChoice(self.choices.currentRow())
 
     def jumpNameChanged(self):
         self.info.renameJump(self.jumpName.text())
