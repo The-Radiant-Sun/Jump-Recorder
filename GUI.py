@@ -167,6 +167,7 @@ class UiForm(object):
         try:
             int(self.choiceCP.text())
             self.info.changeCP(self.choices.currentRow(), self.choiceCP.text())
+            self.jumpCP.setText(self.info.jumpCP)
         except Exception:
             self.choiceCP.setText(self.info.choiceCP)
 

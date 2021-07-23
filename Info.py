@@ -49,8 +49,11 @@ class Info:
         try:
             self.file = open(self.jump, mode='r')
             self.jumpOptions = self.file.readlines()
-            self.jumpOptions = [self.remove(self.jumpOptions[:-1], 1), [self.jumpOptions[-1]]]
-            self.jumpOptions = [option[0].split(',,') for option in self.jumpOptions]
+            for option in self.jumpOptions:
+                if option != self.jumpOptions[-1]:
+                    self.jumpOptions[self.jumpOptions.index(option)] = option[:-1].split(',,')
+                else:
+                    self.jumpOptions[self.jumpOptions.index(option)] = option.split(',,')
             self.writeJumpOptions()
         except Exception:
             thisIsLiterallyImpossible = True  # Read name of variable
@@ -89,7 +92,7 @@ class Info:
             quit()
 
     def getTotalCP(self):
-        print(self.jumpOptions[1:][2])
+        self.jumpCP = str(sum([int(choice[FileOrder.index('CP Change')]) for choice in self.jumpOptions[1:]]))
 
     def renameJump(self, newName):
         try:
@@ -110,6 +113,7 @@ class Info:
     def changeCP(self, choice, newCP):
         self.changeJumpOptions(choice, 'CP Change', newCP)
         self.choiceCP = newCP
+        self.getTotalCP()
 
     def changeActive(self, choice, newActive):
         self.changeJumpOptions(choice, 'Active', newActive)
