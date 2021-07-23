@@ -48,21 +48,21 @@ class UiForm(object):
             self_name.setObjectName(name)
         # Creating the form
         form.setObjectName("Form")
-        form.resize(1000, 750)
+        form.showFullScreen()
         # Altering the ratios
         self.width_ratio = form.width() / 565
         self.height_ratio = form.height() / 399
         # Creating the widgets
         setup_widget(self.jumpers, self.ratio_alter(10, 10, 75, 14), 'jumpers')
 
-        setup_widget(self.jumps, self.ratio_alter(10, 29, 75, 335.5), 'jumps')
+        setup_widget(self.jumps, self.ratio_alter(10, 29, 75, 360.5), 'jumps')
         setup_widget(self.jumpName, self.ratio_alter(170, 29, 125, 14), 'jumpName')
         setup_widget(self.jumpCP, self.ratio_alter(170, 10, 75, 14), 'jumpCP')
 
         setup_widget(self.changeType, self.ratio_alter(90, 10, 75, 14), 'changeType')
         setup_widget(self.changeButton, self.ratio_alter(90, 29, 75, 14), 'changeButton')
 
-        setup_widget(self.choices, self.ratio_alter(90, 48, 75, 316.5), 'choices')
+        setup_widget(self.choices, self.ratio_alter(90, 48, 75, 341.5), 'choices')
         setup_widget(self.choiceName, self.ratio_alter(300, 29, 252, 14), 'choiceName')
         setup_widget(self.choiceCP, self.ratio_alter(477, 10, 75, 14), 'choiceCP')
         setup_widget(self.choiceType, self.ratio_alter(250, 10, 150, 14), 'choiceType')
@@ -71,7 +71,7 @@ class UiForm(object):
         setup_widget(self.chained, self.ratio_alter(435, 10, 35, 14), 'chained')
 
         setup_widget(self.mainInfo, self.ratio_alter(170, 48, 382, 221), 'mainInfo')
-        setup_widget(self.secondInfo, self.ratio_alter(170, 274, 382, 90), 'secondInfo')
+        setup_widget(self.secondInfo, self.ratio_alter(170, 274, 382, 115), 'secondInfo')
         # Adding text to lists
         self.jumpers.addItems(self.info.jumpers)
         self.jumps.addItems(self.info.jumps)
