@@ -21,17 +21,24 @@ class UiForm(object):
         self.height_ratio = 1
         # Establishing base widgets
         self.jumpers = QtWidgets.QComboBox(form)
+
         self.mainInfo = QtWidgets.QPlainTextEdit(form)
         self.secondInfo = QtWidgets.QPlainTextEdit(form)
+
         self.jumps = QtWidgets.QListWidget(form)
         self.choices = QtWidgets.QListWidget(form)
+
         self.jumpCP = QtWidgets.QLineEdit(form)
         self.choiceCP = QtWidgets.QLineEdit(form)
+
         self.choiceType = QtWidgets.QComboBox(form)
+
         self.chained = QtWidgets.QCheckBox(form)
         self.active = QtWidgets.QCheckBox(form)
+
         self.changeType = QtWidgets.QComboBox(form)
         self.changeButton = QtWidgets.QPushButton(form)
+
         self.jumpName = QtWidgets.QLineEdit(form)
         self.choiceName = QtWidgets.QLineEdit(form)
 
@@ -114,10 +121,9 @@ class UiForm(object):
 
     def clickedChoice(self):
         item = self.choices.currentItem().text()
-        self.info.getChoice(item)
+        self.info.getChoice(self.choices.currentRow())
 
         self.choiceName.setText(item)
-        print(1)
         self.choiceCP.setText(str(self.info.choiceCP) + ' CP')
         self.choiceType.setCurrentIndex(self.info.choiceType)
 
@@ -139,13 +145,26 @@ class UiForm(object):
         self.jumps.currentItem().setText(self.jumpName.text())
 
     def choiceNameChanged(self):
-        self.info.renameChoice(self.choices.currentIndex(), self.choiceName.text())
+        self.info.renameChoice(self.choices.currentRow() + 1, self.choiceName.text())
+        self.choices.currentItem().setText(self.choiceName.text())
 
     def clickedChangeType(self):
         self.changeButton.setText(self.changeType.currentText())
 
     def mainInfoChanged(self):
-        print("main change")
+        self.info.changeDescription(self.choices.currentItem(), self.mainInfo.toPlainText())
 
     def secondInfoChanged(self):
-        print("second change")
+        self.info.changeNotes(self.choices.currentItem(), self.secondInfo.toPlainText())
+
+    def choiceCPChanged(self):
+        self.info.changeCP(self.choices.currentItem(), self.choiceCP.text())
+
+    def choiceTypeChanged(self):
+        self.info.changeType(self.choices.currentItem(), self.choiceType.currentIndex())
+
+    def activeChanged(self):
+        self.info.changeActive(self.choices.currentItem(), self.active.isChecked())
+
+    def chainedChanged(self):
+        self.info.changeChained(self.choices.currentItem(), self.chained.isChecked())
