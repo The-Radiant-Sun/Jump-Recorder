@@ -44,6 +44,11 @@ class Info:
     def pathConnect(branch, subBranch):
         return branch + '/' + subBranch
 
+    def getLength(self, length):
+        if len(length) < 8:
+            length = self.getLength('0' + length)
+        return length
+
     def getJumper(self, jumper):
         self.jumperPath = self.pathConnect(self.path, jumper)
         self.jumps = os.listdir(self.jumperPath)
@@ -54,15 +59,15 @@ class Info:
 
     def addJump(self):
         try:
-            self.jump = self.pathConnect(self.jumperPath, 'New Jump.csv')
+            self.jump = self.pathConnect(self.jumperPath, '{}__New Jump.csv'.format(self.getLength(str(len(self.jumps) + 1))))
             self.file = open(self.jump, mode='x')
             self.file.write("Name,,Type,,CP Change,,Active,,Chained,,Description,,Notes\nStarting CP,,6,,1000,,True,,False,,,,")
             self.jumps = self.remove(os.listdir(self.jumperPath), 4)
         except FileExistsError:
-            print('Rename previous new jump')
+            "Do Nothing"
 
-    def getJump(self, jump):
-        self.jump = self.pathConnect(self.jumperPath, jump + ".csv")
+    def getJump(self, row, jump):
+        self.jump = self.pathConnect(self.jumperPath, "{}__{}.csv".format(self.getLength(str(row)), jump))
         self.getJumpChoices()
 
     def deleteJump(self):
@@ -136,8 +141,9 @@ class Info:
     def renameJump(self, newName):
         try:
             self.file.close()
-            os.rename(self.jump, self.pathConnect(self.jumperPath, newName + ".csv"))
-            self.jump = self.pathConnect(self.jumperPath, newName + ".csv")
+            newName = "{}__{}.csv".format(self.jump.split('/')[-1].split('__')[0], newName)
+            os.rename(self.jump, self.pathConnect(self.jumperPath, newName))
+            self.jump = self.pathConnect(self.jumperPath, newName)
             self.getJumpChoices()
         except TypeError:
             """Do nothing"""

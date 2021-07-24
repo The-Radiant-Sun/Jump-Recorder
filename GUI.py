@@ -58,6 +58,7 @@ class UiForm(object):
         setup_widget(self.jumps, self.ratio_alter(10, 29, 75, 360.5), 'jumps')
         setup_widget(self.jumpName, self.ratio_alter(170, 29, 125, 14), 'jumpName')
         setup_widget(self.jumpCP, self.ratio_alter(170, 10, 75, 14), 'jumpCP')
+        self.jumpCP.setReadOnly(True)
 
         setup_widget(self.changeType, self.ratio_alter(90, 10, 75, 14), 'changeType')
         setup_widget(self.changeButton, self.ratio_alter(90, 29, 75, 14), 'changeButton')
@@ -72,10 +73,11 @@ class UiForm(object):
 
         setup_widget(self.mainInfo, self.ratio_alter(170, 48, 382, 221), 'mainInfo')
         setup_widget(self.secondInfo, self.ratio_alter(170, 274, 382, 115), 'secondInfo')
-        # Adding text to lists
-        self.jumpers.addItems(self.info.jumpers)
-        self.jumps.addItems(self.info.jumps)
-        self.changeType.addItems(['Add Jump', 'Add Choice', 'Backup Jump', 'Add Jumper', 'Backup Jumper', 'Rearrange Jumps', 'Delete Choice', 'Delete Jump', 'Delete Jumper'])
+
+        self.getJumpers()
+        self.getJumps()
+
+        self.changeType.addItems(['Add Jump', 'Add Choice', 'Backup Jump', 'Add Jumper', 'Backup Jumper', 'Rearrange Jumps', 'Delete Choice', 'Delete Jump', 'Delete Jumper', 'Close Application'])
         self.choiceType.addItems(['Origin', 'Perk', 'Item', 'Companion', 'Drawback', 'Scenario', 'Other'])
         # Adding text to others
         self.active.setText("Active")
@@ -101,19 +103,33 @@ class UiForm(object):
         self.active.stateChanged.connect(self.activeChanged)
         self.chained.stateChanged.connect(self.chainedChanged)
 
+    def getJumpers(self):
+        self.jumpers.clear()
+        self.jumpers.addItems(self.info.jumpers)
+
+    def getJumps(self):
+        self.jumps.clear()
+        self.jumps.addItems(self.info.jumps)
+
+        for i in range(len(self.jumps)):
+            self.jumps.setCurrentRow(i)
+            self.jumps.currentItem().setText(self.jumps.currentItem().text()[10:])
+
+    def getChoices(self):
+        self.choices.clear()
+        self.choices.addItems(name[0] for name in self.info.jumpChoices[1:])
+
     def clickedJumper(self):
         self.jumps.clear()
         self.info.getJumper(self.jumpers.currentText())
-        self.jumps.addItems(self.info.jumps)
+        self.makeLists()
 
     def clickedJump(self):
-        item = self.jumps.currentItem().text()
-        self.info.getJump(item)
+        self.info.getJump(self.jumps.currentRow() + 1, self.jumps.currentItem().text())
 
-        self.jumpName.setText(item)
+        self.jumpName.setText(self.jumps.currentItem().text())
 
-        self.choices.clear()
-        self.choices.addItems(name[0] for name in self.info.jumpChoices[1:])
+        self.getChoices()
 
     def clickedChoice(self):
         item = self.choices.currentItem().text()
@@ -133,11 +149,10 @@ class UiForm(object):
         text = self.changeType.currentText()
         if text == 'Add Jump':
             self.info.addJump()
-            self.jumps.clear()
-            self.jumps.addItems(self.info.jumps)
+            self.getJumps()
         elif text == 'Add Choice':
             self.info.addChoice()
-            self.clickedJump()
+            self.getChoices()
             self.choices.setCurrentRow(len(self.choices) - 1)
             self.clickedChoice()
         elif text == 'Backup Jump':
@@ -151,12 +166,14 @@ class UiForm(object):
         elif text == 'Delete Jump' and self.confirm(text):
             currentRow = self.jumps.currentRow()
             self.info.deleteJump()
-            self.clickedJumper()
-            self.jumps.setCurrentRow(currentRow - 1)
-            self.clickedJump()
+            self.getJumps()
+            self.jumps.setCurrentRow(currentRow - (1 if currentRow != 0 else 0))
+            self.getChoices()
         elif text == 'Delete Choice' and self.confirm(text):
             self.info.deleteChoice(self.choices.currentRow())
-            self.clickedJump()
+            self.getChoices()
+        elif text == 'Close Application' and self.confirm(text):
+            quit()
 
     @staticmethod
     def confirm(text):
