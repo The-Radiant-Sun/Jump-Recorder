@@ -113,7 +113,9 @@ class UiForm(object):
 
         for i in range(len(self.jumps)):
             self.jumps.setCurrentRow(i)
-            self.jumps.currentItem().setText(self.jumps.currentItem().text()[10:])
+            self.jumps.currentItem().setText(self.jumps.currentItem().text().split('__')[1])
+
+        self.jumps.setCurrentRow(0)
 
     def getChoices(self):
         self.choices.clear()
@@ -122,7 +124,7 @@ class UiForm(object):
     def clickedJumper(self):
         self.jumps.clear()
         self.info.getJumper(self.jumpers.currentText())
-        self.makeLists()
+        self.getJumps()
 
     def clickedJump(self):
         self.info.getJump(self.jumps.currentRow() + 1, self.jumps.currentItem().text())

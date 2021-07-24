@@ -14,11 +14,11 @@ class Info:
             if not os.path.exists(tree):
                 os.makedirs(tree)
 
-        self.jumpers = os.listdir(self.path)
+        self.getJumpers()
 
         self.jumperPath = self.pathConnect(self.path, self.jumpers[0])
 
-        self.jumps = self.remove(os.listdir(self.jumperPath), 4)
+        self.getJumps()
 
         self.jump = self.jumperPath
 
@@ -49,20 +49,26 @@ class Info:
             length = self.getLength('0' + length)
         return length
 
+    def getJumpers(self):
+        self.jumpers = os.listdir(self.path)
+
+    def getJumps(self):
+        self.jumps = self.remove(os.listdir(self.jumperPath), 4)
+
     def getJumper(self, jumper):
         self.jumperPath = self.pathConnect(self.path, jumper)
-        self.jumps = os.listdir(self.jumperPath)
-        self.remove(self.jumps, 4)
+        self.getJumps()
 
     def deleteJumper(self):
         os.rmdir(self.jumperPath)
+        self.getJumpers()
 
     def addJump(self):
         try:
-            self.jump = self.pathConnect(self.jumperPath, '{}__New Jump.csv'.format(self.getLength(str(len(self.jumps) + 1))))
+            self.jump = self.pathConnect(self.jumperPath, '{}__New Jump {}.csv'.format(self.getLength(str(len(self.jumps) + 1)), str(len(self.jumps) + 1)))
             self.file = open(self.jump, mode='x')
             self.file.write("Name,,Type,,CP Change,,Active,,Chained,,Description,,Notes\nStarting CP,,6,,1000,,True,,False,,,,")
-            self.jumps = self.remove(os.listdir(self.jumperPath), 4)
+            self.getJumps()
         except FileExistsError:
             "Do Nothing"
 
@@ -70,11 +76,26 @@ class Info:
         self.jump = self.pathConnect(self.jumperPath, "{}__{}.csv".format(self.getLength(str(row)), jump))
         self.getJumpChoices()
 
+    def renameJump(self, newName):
+        try:
+            self.file.close()
+            newName = "{}__{}.csv".format(self.jump.split('/')[-1].split('__')[0], newName)
+            os.rename(self.jump, self.pathConnect(self.jumperPath, newName))
+            self.jump = self.pathConnect(self.jumperPath, newName)
+            self.getJumpChoices()
+        except TypeError:
+            """Do nothing"""
+
     def deleteJump(self):
         try:
             self.file.close()
             os.remove(self.jump)
-        except FileNotFoundError:
+            self.getJumps()
+            for jump in self.jumps:
+                jumpID = int(jump.split('__')[0])
+                if jumpID > int(self.jump.split('/')[-1].split('__')[0]):
+                    os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, '{}__{}.csv'.format(self.getLength(str(jumpID - 1)), jump.split('__')[1])))
+        except Exception:
             "Do nothing"
 
     def getJumpChoices(self):
@@ -137,16 +158,6 @@ class Info:
 
     def getTotalCP(self):
         self.jumpCP = str(sum([int((choice[FileOrder.index('CP Change')]) if choice[FileOrder.index('CP Change')] != '' and bool(choice[FileOrder.index('Active')] == 'True') else 0) for choice in self.jumpChoices[1:]]))
-
-    def renameJump(self, newName):
-        try:
-            self.file.close()
-            newName = "{}__{}.csv".format(self.jump.split('/')[-1].split('__')[0], newName)
-            os.rename(self.jump, self.pathConnect(self.jumperPath, newName))
-            self.jump = self.pathConnect(self.jumperPath, newName)
-            self.getJumpChoices()
-        except TypeError:
-            """Do nothing"""
 
     def renameChoice(self, choice, newName):
         self.changeJumpChoices(choice, 'Name', newName)
