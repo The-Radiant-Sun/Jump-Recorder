@@ -159,7 +159,8 @@ class UiForm(object):
         elif text == 'Backup Jump':
             self.info.backupJump()
         elif text == 'Add Jumper':
-            self.info.addJumper()
+            if self.info.addJumper(QtWidgets.QInputDialog.getText(QtWidgets.QWidget(), 'Add Jumper', 'Name of new Jumper:')) == False:
+                QtWidgets.QMessageBox.warning(QtWidgets.QWidget(), 'Jumper Name Error', 'Change new Jumper Name', QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.Yes)
         elif text == 'Backup Jumper':
             self.info.backupJumper()
         elif text == 'Rearrange Jumps':

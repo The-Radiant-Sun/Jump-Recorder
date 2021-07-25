@@ -59,6 +59,14 @@ class Info:
         self.jumperPath = self.pathConnect(self.path, jumper)
         self.getJumps()
 
+    def addJumper(self, jumperName):
+        if jumperName[1] == True:
+            try:
+                print(self.pathConnect(self.path, jumperName[0]))
+                os.makedirs(self.pathConnect(self.path, jumperName[0]))
+            except Exception:
+                return False
+
     def deleteJumper(self):
         os.rmdir(self.jumperPath)
         self.getJumpers()
