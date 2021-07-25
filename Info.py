@@ -86,6 +86,19 @@ class Info:
         except TypeError:
             """Do nothing"""
 
+    def moveJump(self, oldPos, newPos):
+        try:
+            self.file.close()
+            os.rename(self.jump, self.pathConnect(self.jumperPath, '0__' + self.jump.split('__')[1]))
+            for jump in self.jumps:
+                jumpID = int(jump.split('__')[0])
+                if oldPos >= jumpID >= newPos:
+                    os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, '{}__{}.csv'.format(self.getLength(str(jumpID + 1)), jump.split('__')[1])))
+            os.rename(self.pathConnect(self.jumperPath, '0__' + self.jump.split('__')[1]), self.pathConnect(self.jumperPath, '{}__{}'.format(self.getLength(str(newPos)), self.jump.split('__')[1])))
+            self.getJumps()
+        except Exception:
+            "Do nothing"
+
     def deleteJump(self):
         try:
             self.file.close()
