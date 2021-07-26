@@ -77,7 +77,7 @@ class UiForm(object):
         self.getJumpers()
         self.getJumps()
 
-        self.changeType.addItems(['Add Jump', 'Add Choice', 'Backup Jump', 'Add Jumper', 'Backup Jumper', 'Rename Jumper', 'Rearrange Jumps', 'Delete Choice', 'Delete Jump', 'Delete Jumper', 'Close Application'])
+        self.changeType.addItems(['Add Jump', 'Add Choice', 'Backup Jump', 'Add Jumper', 'Backup Jumper', 'Import Jump', 'Rename Jumper', 'Rearrange Jumps', 'Delete Choice', 'Delete Jump', 'Delete Jumper', 'Close Application'])
         self.choiceType.addItems(['Origin', 'Perk', 'Item', 'Companion', 'Drawback', 'Scenario', 'Other'])
         # Adding text to others
         self.active.setText("Active")
@@ -104,6 +104,8 @@ class UiForm(object):
         self.chained.stateChanged.connect(self.chainedChanged)
         # Grabbing initial values
         self.clickedJump()
+        self.choices.setCurrentRow(0)
+        self.clickedChoice()
 
 
     def getJumpers(self):
@@ -140,28 +142,43 @@ class UiForm(object):
         self.info.getChoice(self.choices.currentRow())
 
         self.choiceName.setText(item)
-        self.choiceCP.setText(self.info.choiceCP)
+        self.choiceCP.setText(self.info.choiceCP[:-1])
         self.choiceType.setCurrentIndex(self.info.choiceType)
 
-        self.mainInfo.setPlainText(self.info.choiceDescription)
-        self.secondInfo.setPlainText(self.info.choiceNotes)
+        self.mainInfo.setPlainText(self.info.choiceDescription.replace('%%', '\n'))
+        self.secondInfo.setPlainText(self.info.choiceNotes.replace('%%', '\n'))
 
         self.active.setChecked(self.info.choiceActive)
         self.chained.setChecked(self.info.choiceChained)
 
     def clickedChangeButton(self):
         text = self.changeType.currentText()
+
         if text == 'Add Jump':
             self.info.addJump()
             self.getJumps()
             self.jumps.setCurrentRow(len(self.jumps) - 1)
+
         elif text == 'Add Choice':
             self.info.addChoice()
             self.getChoices()
             self.choices.setCurrentRow(len(self.choices) - 1)
             self.clickedChoice()
+            self.active.setChecked(False)
+            self.chained.setChecked(False)
+            self.choiceCP.setText('0')
+
         elif text == 'Backup Jump':
             self.info.backupJump(False)
+
+        elif text == 'Import Jump' and len(self.info.backups) != 0:
+            newJump = QtWidgets.QInputDialog.getItem(QtWidgets.QWidget(), 'Import Jump', 'Import Jump:', [backup[:-4] for backup in self.info.backups], 0, False)
+            if newJump[1]:
+                newJump = self.info.importJump(newJump[0])
+            if newJump:
+                self.getJumps()
+                self.jumps.setCurrentRow(len(self.jumps))
+
         elif text == 'Add Jumper':
             newJumper = self.info.addJumper(QtWidgets.QInputDialog.getText(QtWidgets.QWidget(), 'Add Jumper', 'Name of new Jumper:'))
             if newJumper == False:
@@ -170,32 +187,39 @@ class UiForm(object):
                 self.getJumpers()
                 self.jumpers.setCurrentIndex(self.info.jumpers.index(newJumper))
                 self.clickedJumper()
+
         elif text == 'Backup Jumper':
             self.info.backupJumper()
+
         elif text == 'Rename Jumper':
             newName = self.info.renameJumper(QtWidgets.QInputDialog.getText(QtWidgets.QWidget(), 'Add Jumper', 'Name of new Jumper:'))
-            if newName[0] == False:
+            if not newName[0]:
                 QtWidgets.QMessageBox.warning(QtWidgets.QWidget(), 'Jumper Name Error', 'Change Jumper Name', QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.Yes)
             else:
                 self.getJumpers()
                 self.jumpers.setCurrentIndex(self.info.jumpers.index(newName[1]))
                 self.clickedJumper()
+
         elif text == 'Rearrange Jumps':
             newPos = QtWidgets.QInputDialog.getInt(QtWidgets.QWidget(), 'Rearrange Current Jump', 'Move current jump to:', self.jumps.currentRow() + 1, 1, len(self.jumps), 1)
             if newPos[1] == True:
                 self.info.moveJump(self.jumps.currentRow(), newPos[0])
                 self.getJumps()
+
         elif text == 'Delete Jumper' and self.confirm(text):
             self.info.deleteJumper()
+
         elif text == 'Delete Jump' and len(self.jumps) > 1 and self.confirm(text):
             currentRow = self.jumps.currentRow()
             self.info.deleteJump()
             self.getJumps()
             self.jumps.setCurrentRow(currentRow if currentRow < len(self.jumps) else len(self.jumps) - 1)
             self.clickedJump()
+
         elif text == 'Delete Choice' and self.confirm(text):
             self.info.deleteChoice(self.choices.currentRow())
             self.getChoices()
+
         elif text == 'Close Application' and self.confirm(text):
             quit()
 
@@ -205,8 +229,11 @@ class UiForm(object):
         return check.Yes == check.question(QtWidgets.QWidget(), 'Confirmation Question', 'Are you sure you want to {}?'.format(text.lower()), check.Yes | check.No, check.No)
 
     def jumpNameChanged(self):
+        index = self.choices.currentRow()
         self.info.renameJump(self.jumpName.text())
         self.jumps.currentItem().setText(self.jumpName.text())
+        self.getChoices()
+        self.choices.setCurrentRow(index)
 
     def choiceNameChanged(self):
         self.info.renameChoice(self.choices.currentRow(), self.choiceName.text())
@@ -216,18 +243,18 @@ class UiForm(object):
         self.changeButton.setText(self.changeType.currentText())
 
     def mainInfoChanged(self):
-        self.info.changeDescription(self.choices.currentRow(), self.mainInfo.toPlainText())
+        self.info.changeDescription(self.choices.currentRow(), self.mainInfo.toPlainText().replace('\n', '%%'))
 
     def secondInfoChanged(self):
-        self.info.changeNotes(self.choices.currentRow(), self.secondInfo.toPlainText())
+        self.info.changeNotes(self.choices.currentRow(), self.secondInfo.toPlainText().replace('\n', '%%'))
 
     def choiceCPChanged(self):
         try:
-            int(self.choiceCP.text())
-            self.info.changeCP(self.choices.currentRow(), self.choiceCP.text())
+            int(self.choiceCP.text() + '0')
+            self.info.changeCP(self.choices.currentRow(), self.choiceCP.text() + '0')
             self.jumpCP.setText(self.info.jumpCP)
         except Exception:
-            self.choiceCP.setText(self.info.choiceCP)
+            self.choiceCP.setText(self.info.choiceCP[:-1])
 
     def choiceTypeChanged(self):
         self.info.changeType(self.choices.currentRow(), self.choiceType.currentIndex())

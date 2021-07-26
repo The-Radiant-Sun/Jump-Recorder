@@ -16,6 +16,8 @@ class Info:
 
         self.path = 'Info/Jumpers'
 
+        self.getBackups()
+
         self.getJumpers()
 
         if len(self.jumpers) == 0:
@@ -72,6 +74,9 @@ class Info:
         self.jumperPath = self.pathConnect(self.path, jumper)
         self.getJumps()
 
+    def getBackups(self):
+        self.backups = os.listdir(FileTree[2])
+
     def addJumper(self, jumperName):
         if jumperName[1] == True:
             try:
@@ -117,7 +122,7 @@ class Info:
         try:
             self.jump = self.pathConnect(self.jumperPath, '{}__New Jump {}.csv'.format(self.getLength(str(len(self.jumps) + 1)), str(len(self.jumps) + 1)))
             self.file = open(self.jump, mode='x')
-            self.file.write("Name,,Type,,CP Change,,Active,,Chained,,Description,,Notes\nStarting CP,,6,,1000,,True,,False,,,,")
+            self.file.write("Name,,Type,,CP Change,,Active,,Chained,,Description,,Notes\nStarting CP,,6,,10000,,True,,False,,,,")
             self.getJumps()
         except FileExistsError:
             "Do Nothing"
@@ -141,6 +146,8 @@ class Info:
             backupPath = self.pathConnect("Info/Backup/Jumpers", self.jump.split('/')[-2] + '/' + self.jump.split('/')[-1])
         else:
             backupPath = self.pathConnect("Info/Backup/Jumps", self.jump.split('/')[-1].split('__')[-1])
+        backupPath = backupPath.split('.')
+        backupPath = "{} - {}.{}".format(backupPath[0], self.jumperPath.split('/')[-1], backupPath[1])
         try:
             self.file = open(backupPath, mode='x')
         except FileExistsError:
@@ -148,7 +155,20 @@ class Info:
         record = self.jump
         self.jump = backupPath
         self.writeJumpChoices()
+        self.getBackups()
         self.jump = record
+
+    def importJump(self, jump):
+        try:
+            self.jump = self.pathConnect(FileTree[2], jump + '.csv')
+            self.getJumpChoices()
+            self.jump = self.pathConnect(self.jumperPath, '{}__{}.csv'.format(self.getLength(str(len(self.jumps) + 1)), jump))
+            self.file = open(self.jump, mode='x')
+            self.writeJumpChoices()
+            self.getJumps()
+            return True
+        except Exception:
+            return False
 
     def moveJump(self, oldPos, newPos):
         try:
@@ -211,6 +231,10 @@ class Info:
         newFileOrder = ['' for order in FileOrder]
         newFileOrder[FileOrder.index('Name')] = 'Choice {}'.format(str(len(self.jumpChoices)))
         newFileOrder[FileOrder.index('Type')] = self.jumpChoices[-1][FileOrder.index('Type')]
+        newFileOrder[FileOrder.index('CP Change')] = '00'
+        newFileOrder[FileOrder.index('Active')] = 'False'
+        newFileOrder[FileOrder.index('Chained')] = 'False'
+
         self.jumpChoices.append(newFileOrder)
         self.writeJumpChoices()
 
@@ -234,7 +258,7 @@ class Info:
         self.writeJumpChoices()
 
     def getTotalCP(self):
-        self.jumpCP = str(sum([int((choice[FileOrder.index('CP Change')]) if choice[FileOrder.index('CP Change')] != '' and bool(choice[FileOrder.index('Active')] == 'True') else 0) for choice in self.jumpChoices[1:]]))
+        self.jumpCP = str(sum([int((choice[FileOrder.index('CP Change')][:-1]) if bool(choice[FileOrder.index('Active')] == 'True') else 0) for choice in self.jumpChoices[1:]]))
 
     def renameChoice(self, choice, newName):
         self.changeJumpChoices(choice, 'Name', newName)
