@@ -1,24 +1,37 @@
 import os
+import sys
+import subprocess
+
 
 FileOrder = ['Name', 'Type', 'CP Change', 'Active', 'Chained', 'Description', 'Notes']
-EmptyFileOrder = ['' for order in FileOrder]
 
 FileTree = ['Info/Jumpers', 'Info/Backup/Jumpers', 'Info/Backup/Jumps']
 
 
 class Info:
     def __init__(self):
-        self.path = 'Info/Jumpers'
-
         for tree in FileTree:
             if not os.path.exists(tree):
                 os.makedirs(tree)
 
+        self.path = 'Info/Jumpers'
+
         self.getJumpers()
+
+        if len(self.jumpers) == 0:
+            os.makedirs('Info/Jumpers/Jumper 1')
+            self.getJumpers()
+            try:
+                open(self.pathConnect(self.path, self.jumpers[0]), mode='x').write("Name,,Type,,CP Change,,Active,,Chained,,Description,,Notes\nStarting CP,,6,,1000,,True,,False,,,,")
+            except PermissionError:
+                subprocess.call([sys.executable, os.path.realpath(__file__)] + sys.argv[1:])
 
         self.jumperPath = self.pathConnect(self.path, self.jumpers[0])
 
         self.getJumps()
+
+        if len(self.jumps) == 0:
+            self.addJump()
 
         self.jump = self.jumperPath
 
@@ -63,8 +76,14 @@ class Info:
         if jumperName[1] == True:
             try:
                 os.makedirs(self.pathConnect(self.path, jumperName[0]))
+                self.jumperPath = self.pathConnect(self.path, jumperName[0])
+                self.getJumpers()
+                self.getJumps()
+                self.addJump()
+                return jumperName[0]
             except Exception:
                 return False
+        return False
 
     def backupJumper(self):
         backupPath = self.pathConnect("Info/Backup/Jumpers", self.jumperPath.split('/')[-1])
@@ -175,7 +194,7 @@ class Info:
             quit()
 
     def addChoice(self):
-        newFileOrder = EmptyFileOrder
+        newFileOrder = ['' for order in FileOrder]
         newFileOrder[FileOrder.index('Name')] = 'Choice {}'.format(str(len(self.jumpChoices)))
         newFileOrder[FileOrder.index('Type')] = self.jumpChoices[-1][FileOrder.index('Type')]
         self.jumpChoices.append(newFileOrder)
