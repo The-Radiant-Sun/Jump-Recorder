@@ -1,7 +1,7 @@
 import os
 
 FileOrder = ['Name', 'Type', 'CP Change', 'Active', 'Chained', 'Description', 'Notes']
-EmptyFileOrder = ['', '', '', '', '', '', '', '']
+EmptyFileOrder = ['' for order in FileOrder]
 
 FileTree = ['Info/Jumpers', 'Info/Backup/Jumpers', 'Info/Backup/Jumps']
 
@@ -62,10 +62,19 @@ class Info:
     def addJumper(self, jumperName):
         if jumperName[1] == True:
             try:
-                print(self.pathConnect(self.path, jumperName[0]))
                 os.makedirs(self.pathConnect(self.path, jumperName[0]))
             except Exception:
                 return False
+
+    def backupJumper(self):
+        backupPath = self.pathConnect("Info/Backup/Jumpers", self.jumperPath.split('/')[-1])
+        if not os.path.exists(backupPath):
+            os.makedirs(backupPath)
+        record = self.jump
+        for jump in self.jumps:
+            self.jump = self.pathConnect(backupPath, '{}.csv'.format(jump))
+            self.backupJump(True)
+        self.jump = record
 
     def deleteJumper(self):
         os.rmdir(self.jumperPath)
@@ -93,6 +102,20 @@ class Info:
             self.getJumpChoices()
         except TypeError:
             """Do nothing"""
+
+    def backupJump(self, toJumper):
+        if toJumper:
+            backupPath = self.pathConnect("Info/Backup/Jumpers", self.jump.split('/')[-2] + '/' + self.jump.split('/')[-1])
+        else:
+            backupPath = self.pathConnect("Info/Backup/Jumps", self.jump.split('/')[-1].split('__')[-1])
+        try:
+            self.file = open(backupPath, mode='x')
+        except FileExistsError:
+            "Continue"
+        record = self.jump
+        self.jump = backupPath
+        self.writeJumpChoices()
+        self.jump = record
 
     def moveJump(self, oldPos, newPos):
         try:

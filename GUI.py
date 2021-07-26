@@ -102,6 +102,9 @@ class UiForm(object):
 
         self.active.stateChanged.connect(self.activeChanged)
         self.chained.stateChanged.connect(self.chainedChanged)
+        # Grabbing initial values
+        self.clickedJump()
+
 
     def getJumpers(self):
         self.jumpers.clear()
@@ -157,7 +160,7 @@ class UiForm(object):
             self.choices.setCurrentRow(len(self.choices) - 1)
             self.clickedChoice()
         elif text == 'Backup Jump':
-            self.info.backupJump()
+            self.info.backupJump(False)
         elif text == 'Add Jumper':
             if self.info.addJumper(QtWidgets.QInputDialog.getText(QtWidgets.QWidget(), 'Add Jumper', 'Name of new Jumper:')) == False:
                 QtWidgets.QMessageBox.warning(QtWidgets.QWidget(), 'Jumper Name Error', 'Change new Jumper Name', QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.Yes)
