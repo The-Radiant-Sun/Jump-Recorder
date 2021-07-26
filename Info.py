@@ -95,6 +95,20 @@ class Info:
             self.backupJump(True)
         self.jump = record
 
+    def renameJumper(self, newName):
+        if newName[1] == True and newName[0] != '':
+            try:
+                self.file.close()
+                newPath = self.pathConnect(self.path, newName[0])
+                os.rename(self.jumperPath, newPath)
+                self.getJumpers()
+                self.jumperPath = newPath
+                self.getJumps()
+                return [True, newName[0]]
+            except Exception:
+                return [False]
+        return [False]
+
     def deleteJumper(self):
         os.rmdir(self.jumperPath)
         self.getJumpers()

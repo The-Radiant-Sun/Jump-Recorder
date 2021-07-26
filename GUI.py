@@ -77,7 +77,7 @@ class UiForm(object):
         self.getJumpers()
         self.getJumps()
 
-        self.changeType.addItems(['Add Jump', 'Add Choice', 'Backup Jump', 'Add Jumper', 'Backup Jumper', 'Rearrange Jumps', 'Delete Choice', 'Delete Jump', 'Delete Jumper', 'Close Application'])
+        self.changeType.addItems(['Add Jump', 'Add Choice', 'Backup Jump', 'Add Jumper', 'Backup Jumper', 'Rename Jumper', 'Rearrange Jumps', 'Delete Choice', 'Delete Jump', 'Delete Jumper', 'Close Application'])
         self.choiceType.addItems(['Origin', 'Perk', 'Item', 'Companion', 'Drawback', 'Scenario', 'Other'])
         # Adding text to others
         self.active.setText("Active")
@@ -172,6 +172,14 @@ class UiForm(object):
                 self.clickedJumper()
         elif text == 'Backup Jumper':
             self.info.backupJumper()
+        elif text == 'Rename Jumper':
+            newName = self.info.renameJumper(QtWidgets.QInputDialog.getText(QtWidgets.QWidget(), 'Add Jumper', 'Name of new Jumper:'))
+            if newName[0] == False:
+                QtWidgets.QMessageBox.warning(QtWidgets.QWidget(), 'Jumper Name Error', 'Change Jumper Name', QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.Yes)
+            else:
+                self.getJumpers()
+                self.jumpers.setCurrentIndex(self.info.jumpers.index(newName[1]))
+                self.clickedJumper()
         elif text == 'Rearrange Jumps':
             newPos = QtWidgets.QInputDialog.getInt(QtWidgets.QWidget(), 'Rearrange Current Jump', 'Move current jump to:', self.jumps.currentRow() + 1, 1, len(self.jumps), 1)
             if newPos[1] == True:
