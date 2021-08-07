@@ -138,8 +138,8 @@ class Info:
             os.rename(self.jump, self.pathConnect(self.jumperPath, newName))
             self.jump = self.pathConnect(self.jumperPath, newName)
             self.getJumpChoices()
-        except TypeError:
-            """Do nothing"""
+        except TypeError as Error:
+            print(Error)
 
     def backupJump(self, toJumper):
         if toJumper:
@@ -176,12 +176,18 @@ class Info:
             os.rename(self.jump, self.pathConnect(self.jumperPath, '0__' + self.jump.split('__')[1]))
             for jump in self.jumps:
                 jumpID = int(jump.split('__')[0])
-                if oldPos >= jumpID >= newPos:
+                if jumpID == oldPos:
+                    continue
+                if oldPos > jumpID > newPos:
                     os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, '{}__{}.csv'.format(self.getLength(str(jumpID + 1)), jump.split('__')[1])))
+                if oldPos < jumpID < newPos:
+                    os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, '{}__{}.csv'.format(self.getLength(str(jumpID - 1)), jump.split('__')[1])))
+                if jumpID == newPos:
+                    os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, '{}__{}.csv'.format(self.getLength(str(jumpID + (-1 if int(self.jump.split('/')[-1].split('__')[0]) == 1 else (1 if jumpID == 1 else 0)))), jump.split('__')[1])))
             os.rename(self.pathConnect(self.jumperPath, '0__' + self.jump.split('__')[1]), self.pathConnect(self.jumperPath, '{}__{}'.format(self.getLength(str(newPos)), self.jump.split('__')[1])))
             self.getJumps()
-        except Exception:
-            "Do nothing"
+        except Exception as Error:
+            print(Error)
 
     def deleteJump(self):
         try:
@@ -205,16 +211,15 @@ class Info:
                 else:
                     self.jumpChoices[i] = option.split(',,')
             self.writeJumpChoices()
-        except Exception:
-            thisIsLiterallyImpossible = True  # Read name of variable
-            quit()
+        except Exception as Error:
+            print(Error)
 
     def changeJumpChoices(self, choice, section, new):
         try:
             self.jumpChoices[choice + 1][FileOrder.index(section)] = str(new)
             self.writeJumpChoices()
-        except TypeError:
-            """Do nothing"""
+        except TypeError as Error:
+            print(Error)
 
     def writeJumpChoices(self):
         self.file = open(self.jump, mode='w+')
@@ -223,9 +228,8 @@ class Info:
                 for y, column in enumerate(row):
                     self.file.write(column + (('\n' if x + 1 != len(self.jumpChoices) else '') if y + 1 == len(row) else ',,'))
                     self.file.flush()
-        except Exception:
-            thisIsLiterallyImpossible = True  # Read name of variable
-            quit()
+        except Exception as Error:
+            print(Error)
 
     def addChoice(self):
         newFileOrder = ['' for order in FileOrder]
@@ -248,9 +252,8 @@ class Info:
             self.choiceChained = bool(choice[FileOrder.index('Chained')] == 'True')
             self.choiceDescription = choice[FileOrder.index('Description')]
             self.choiceNotes = choice[FileOrder.index('Notes')]
-        except Exception:
-            thisIsLiterallyImpossible = True  # Read name of variable
-            quit()
+        except Exception as Error:
+            print(Error)
 
     def deleteChoice(self, choice):
         self.getJumpChoices()

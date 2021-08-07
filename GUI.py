@@ -121,6 +121,7 @@ class UiForm(object):
             self.jumps.currentItem().setText(self.jumps.currentItem().text().split('__')[1])
 
         self.jumps.setCurrentRow(0)
+        self.clickedJump()
 
     def getChoices(self):
         self.choices.clear()
@@ -131,11 +132,16 @@ class UiForm(object):
             self.jumps.clear()
             self.info.getJumper(self.jumpers.currentText())
             self.getJumps()
+            self.jumps.setCurrentRow(0)
+            self.clickedJump()
 
     def clickedJump(self):
         self.info.getJump(self.jumps.currentRow() + 1, self.jumps.currentItem().text())
         self.jumpName.setText(self.jumps.currentItem().text())
         self.getChoices()
+        self.choices.setCurrentRow(0)
+        self.clickedChoice()
+        self.jumpCP.setText(self.info.jumpCP)
 
     def clickedChoice(self):
         item = self.choices.currentItem().text()
@@ -158,6 +164,7 @@ class UiForm(object):
             self.info.addJump()
             self.getJumps()
             self.jumps.setCurrentRow(len(self.jumps) - 1)
+            self.clickedJump()
 
         elif text == 'Add Choice':
             self.info.addChoice()
@@ -165,7 +172,7 @@ class UiForm(object):
             self.choices.setCurrentRow(len(self.choices) - 1)
             self.clickedChoice()
             self.active.setChecked(False)
-            self.chained.setChecked(False)
+            self.chained.setChecked(False if self.choiceType.currentText() != 'Perk' and self.choiceType.currentText() != 'Item' else True)
             self.choiceCP.setText('0')
 
         elif text == 'Backup Jump':
@@ -175,9 +182,9 @@ class UiForm(object):
             newJump = QtWidgets.QInputDialog.getItem(QtWidgets.QWidget(), 'Import Jump', 'Import Jump:', [backup[:-4] for backup in self.info.backups], 0, False)
             if newJump[1]:
                 newJump = self.info.importJump(newJump[0])
-            if newJump:
-                self.getJumps()
-                self.jumps.setCurrentRow(len(self.jumps))
+                if newJump:
+                    self.getJumps()
+                    self.jumps.setCurrentRow(len(self.jumps))
 
         elif text == 'Add Jumper':
             newJumper = self.info.addJumper(QtWidgets.QInputDialog.getText(QtWidgets.QWidget(), 'Add Jumper', 'Name of new Jumper:'))
@@ -201,13 +208,15 @@ class UiForm(object):
                 self.clickedJumper()
 
         elif text == 'Rearrange Jumps':
-            newPos = QtWidgets.QInputDialog.getInt(QtWidgets.QWidget(), 'Rearrange Current Jump', 'Move current jump to:', self.jumps.currentRow() + 1, 1, len(self.jumps), 1)
-            if newPos[1] == True:
-                self.info.moveJump(self.jumps.currentRow(), newPos[0])
+            newPos = QtWidgets.QInputDialog.getItem(QtWidgets.QWidget(), 'Rearrange Current Jump', 'Move current jump to:', ["{} - {}".format(str(int(jump.split('__')[0])), jump.split("__")[1]) for jump in self.info.jumps], 0, False)
+            if newPos[1]:
+                self.info.moveJump(self.jumps.currentRow() + 1, int(newPos[0].split(' - ')[0]))
                 self.getJumps()
 
-        elif text == 'Delete Jumper' and self.confirm(text):
+        elif text == 'Delete Jumper' and self.confirm(text) and len(self.jumpers) != 0:
             self.info.deleteJumper()
+            self.getJumpers()
+            self.jumpers.setCurrentIndex(0)
 
         elif text == 'Delete Jump' and len(self.jumps) > 1 and self.confirm(text):
             currentRow = self.jumps.currentRow()
