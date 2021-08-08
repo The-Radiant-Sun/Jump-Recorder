@@ -146,8 +146,8 @@ class Info:
             backupPath = self.pathConnect("Info/Backup/Jumpers", self.jump.split('/')[-2] + '/' + self.jump.split('/')[-1])
         else:
             backupPath = self.pathConnect("Info/Backup/Jumps", self.jump.split('/')[-1].split('__')[-1])
-        backupPath = backupPath.split('.')
-        backupPath = "{} - {}.{}".format(backupPath[0], self.jumperPath.split('/')[-1], backupPath[1])
+            backupPath = backupPath.split('.')
+            backupPath = "{} - {}.{}".format(backupPath[0], self.jumperPath.split('/')[-1], backupPath[1])
         try:
             self.file = open(backupPath, mode='x')
         except FileExistsError:
@@ -215,19 +215,21 @@ class Info:
             print(Error)
 
     def changeJumpChoices(self, choice, section, new):
-        try:
-            self.jumpChoices[choice + 1][FileOrder.index(section)] = str(new)
-            self.writeJumpChoices()
-        except TypeError as Error:
-            print(Error)
+        self.jumpChoices[choice + 1][FileOrder.index(section)] = str(new)
+        self.writeJumpChoices()
 
     def writeJumpChoices(self):
         self.file = open(self.jump, mode='w+')
         try:
             for x, row in enumerate(self.jumpChoices):
                 for y, column in enumerate(row):
-                    self.file.write(column + (('\n' if x + 1 != len(self.jumpChoices) else '') if y + 1 == len(row) else ',,'))
-                    self.file.flush()
+                    try:
+                        self.file.write(column + (('\n' if x + 1 != len(self.jumpChoices) else '') if y + 1 == len(row) else ',,'))
+                        self.file.flush()
+                    except Exception:
+                        self.file.write(('\n' if x + 1 != len(self.jumpChoices) else '') if y + 1 == len(row) else ',,')
+                        self.file.flush()
+                        continue
         except Exception as Error:
             print(Error)
 

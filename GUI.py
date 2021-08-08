@@ -71,8 +71,8 @@ class UiForm(object):
         setup_widget(self.active, self.ratio_alter(405, 10, 30, 14), 'active')
         setup_widget(self.chained, self.ratio_alter(435, 10, 35, 14), 'chained')
 
-        setup_widget(self.mainInfo, self.ratio_alter(170, 48, 382, 221), 'mainInfo')
-        setup_widget(self.secondInfo, self.ratio_alter(170, 274, 382, 115), 'secondInfo')
+        setup_widget(self.mainInfo, self.ratio_alter(170, 48, 382, 251), 'mainInfo')
+        setup_widget(self.secondInfo, self.ratio_alter(170, 304, 382, 85), 'secondInfo')
 
         self.getJumpers()
         self.getJumps()
@@ -252,7 +252,10 @@ class UiForm(object):
         self.changeButton.setText(self.changeType.currentText())
 
     def mainInfoChanged(self):
-        self.info.changeDescription(self.choices.currentRow(), self.mainInfo.toPlainText().replace('\n', '%%'))
+        try:
+            self.info.changeDescription(self.choices.currentRow(), self.mainInfo.toPlainText().replace('\n', '%%'))
+        except Exception:
+            self.mainInfo.setPlainText(self.info.choiceDescription)
 
     def secondInfoChanged(self):
         self.info.changeNotes(self.choices.currentRow(), self.secondInfo.toPlainText().replace('\n', '%%'))
