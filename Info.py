@@ -223,13 +223,13 @@ class Info:
         try:
             for x, row in enumerate(self.jumpChoices):
                 for y, column in enumerate(row):
-                    try:
-                        self.file.write(column + (('\n' if x + 1 != len(self.jumpChoices) else '') if y + 1 == len(row) else ',,'))
-                        self.file.flush()
-                    except Exception:
-                        self.file.write(('\n' if x + 1 != len(self.jumpChoices) else '') if y + 1 == len(row) else ',,')
-                        self.file.flush()
-                        continue
+                    for char in column:
+                        try:
+                            self.file.write(char)
+                        except Exception:
+                            self.file.write('?')
+                    self.file.write(('\n' if x + 1 != len(self.jumpChoices) else '') if y + 1 == len(row) else ',,')
+                    self.file.flush()
         except Exception as Error:
             print(Error)
 

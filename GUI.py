@@ -56,7 +56,7 @@ class UiForm(object):
         setup_widget(self.jumpers, self.ratio_alter(10, 10, 75, 14), 'jumpers')
 
         setup_widget(self.jumps, self.ratio_alter(10, 29, 75, 360.5), 'jumps')
-        setup_widget(self.jumpName, self.ratio_alter(170, 29, 125, 14), 'jumpName')
+        setup_widget(self.jumpName, self.ratio_alter(170, 29, 100, 14), 'jumpName')
         setup_widget(self.jumpCP, self.ratio_alter(170, 10, 75, 14), 'jumpCP')
         self.jumpCP.setReadOnly(True)
 
@@ -64,7 +64,7 @@ class UiForm(object):
         setup_widget(self.changeButton, self.ratio_alter(90, 29, 75, 14), 'changeButton')
 
         setup_widget(self.choices, self.ratio_alter(90, 48, 75, 341.5), 'choices')
-        setup_widget(self.choiceName, self.ratio_alter(300, 29, 252, 14), 'choiceName')
+        setup_widget(self.choiceName, self.ratio_alter(275, 29, 277, 14), 'choiceName')
         setup_widget(self.choiceCP, self.ratio_alter(477, 10, 75, 14), 'choiceCP')
         setup_widget(self.choiceType, self.ratio_alter(250, 10, 150, 14), 'choiceType')
 
