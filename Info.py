@@ -39,7 +39,7 @@ class Info:
 
         self.file = None
 
-        self.jumpChoices = None
+        self.jumpChoices = []
         self.jumpCP = None
 
         self.choiceType = 'Unknown'
@@ -96,7 +96,8 @@ class Info:
             os.makedirs(backupPath)
         record = self.jump
         for jump in self.jumps:
-            self.jump = self.pathConnect(backupPath, '{}.csv'.format(jump))
+            self.jump = self.pathConnect(self.jumperPath, '{}.csv'.format(jump))
+            self.getJumpChoices()
             self.backupJump(True)
         self.jump = record
 
@@ -183,7 +184,7 @@ class Info:
                 if oldPos < jumpID < newPos:
                     os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, '{}__{}.csv'.format(self.getLength(str(jumpID - 1)), jump.split('__')[1])))
                 if jumpID == newPos:
-                    os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, '{}__{}.csv'.format(self.getLength(str(jumpID + (-1 if int(self.jump.split('/')[-1].split('__')[0]) == 1 else (1 if jumpID == 1 else 0)))), jump.split('__')[1])))
+                    os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, '{}__{}.csv'.format(self.getLength(str(jumpID + (-1 if int(self.jump.split('/')[-1].split('__')[0]) == 1 else 1))), jump.split('__')[1])))
             os.rename(self.pathConnect(self.jumperPath, '0__' + self.jump.split('__')[1]), self.pathConnect(self.jumperPath, '{}__{}'.format(self.getLength(str(newPos)), self.jump.split('__')[1])))
             self.getJumps()
         except Exception as Error:
@@ -254,6 +255,19 @@ class Info:
             self.choiceChained = bool(choice[FileOrder.index('Chained')] == 'True')
             self.choiceDescription = choice[FileOrder.index('Description')]
             self.choiceNotes = choice[FileOrder.index('Notes')]
+        except Exception as Error:
+            print(Error)
+
+    def moveChoice(self, newPos, oldPos):
+        try:
+            changed = []
+            for i, choice in enumerate(self.jumpChoices):
+                if i == newPos:
+                    changed.append(self.jumpChoices[oldPos])
+                if i != oldPos:
+                    changed.append(choice)
+            self.jumpChoices = changed
+            self.writeJumpChoices()
         except Exception as Error:
             print(Error)
 
