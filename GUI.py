@@ -199,6 +199,8 @@ class UiForm(object):
             if newPos[1]:
                 self.info.moveJump(self.jumps.currentRow() + 1, int(newPos[0].split(' - ')[0]))
                 self.getJumps()
+                self.jumps.setCurrentRow(int(newPos[0].split(' - ')[0]))
+                self.clickedJump()
 
         elif text == 'Add Jumper':
             newJumper = self.info.addJumper(QtWidgets.QInputDialog.getText(QtWidgets.QWidget(), 'Add Jumper', 'Name of new Jumper:'))
