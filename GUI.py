@@ -9,6 +9,7 @@ class UiForm(object):
         # Forming initial ratios
         self.width_ratio = 1
         self.height_ratio = 1
+        self.memory = {}
         # Establishing base widgets
         self.jumpers = QtWidgets.QComboBox(form)
 
@@ -20,6 +21,8 @@ class UiForm(object):
 
         self.jumpCP = QtWidgets.QLineEdit(form)
         self.choiceCP = QtWidgets.QLineEdit(form)
+
+        self.displayType = QtWidgets.QComboBox(form)
 
         self.choiceType = QtWidgets.QComboBox(form)
 
@@ -55,10 +58,12 @@ class UiForm(object):
         # Creating the widgets
         setup_widget(self.jumpers, self.ratio_alter(10, 10, 75, 14), 'jumpers')
 
-        setup_widget(self.jumps, self.ratio_alter(10, 29, 75, 360.5), 'jumps')
+        setup_widget(self.jumps, self.ratio_alter(10, 48, 75, 360.5), 'jumps')
         setup_widget(self.jumpName, self.ratio_alter(170, 29, 100, 14), 'jumpName')
         setup_widget(self.jumpCP, self.ratio_alter(170, 10, 75, 14), 'jumpCP')
         self.jumpCP.setReadOnly(True)
+
+        setup_widget(self.displayType, self.ratio_alter(10, 29, 75, 14), 'displayType')
 
         setup_widget(self.changeType, self.ratio_alter(90, 10, 75, 14), 'changeType')
         setup_widget(self.changeButton, self.ratio_alter(90, 29, 75, 14), 'changeButton')
@@ -77,7 +82,16 @@ class UiForm(object):
         self.getJumpers()
         self.getJumps()
 
-        self.changeType.addItems(['Add Jump', 'Add Choice', 'Rearrange Choices', 'Backup Jump', 'Import Jump', 'Rearrange Jumps', 'Add Jumper', 'Backup Jumper', 'Rename Jumper', 'Delete Choice', 'Delete Jump', 'Delete Jumper', 'Close Application'])
+        self.displayType.addItems(['Display All', 'Display Active', 'Display Chained'])
+
+        self.changeType.addItems([
+            'Add Jump', 'Add Choice', 'Rearrange Choices',
+            'Backup Jump', 'Import Jump', 'Rearrange Jumps',
+            'Add Jumper', 'Backup Jumper', 'Rename Jumper',
+            'Delete Choice', 'Delete Jump', 'Delete Jumper',
+            'Close Application'
+        ])
+
         self.choiceType.addItems(['Origin', 'Perk', 'Item', 'Companion', 'Drawback', 'Scenario', 'Other'])
         # Adding text to others
         self.active.setText("Active")
@@ -87,6 +101,8 @@ class UiForm(object):
         self.jumpers.currentIndexChanged.connect(self.clickedJumper)
         self.jumps.clicked.connect(self.clickedJump)
         self.choices.clicked.connect(self.clickedChoice)
+
+        self.displayType.currentIndexChanged.connect(self.clickedDisplayType)
 
         self.changeType.currentIndexChanged.connect(self.clickedChangeType)
         self.changeButton.clicked.connect(self.clickedChangeButton)
@@ -125,7 +141,20 @@ class UiForm(object):
 
     def getChoices(self):
         self.choices.clear()
-        self.choices.addItems(name[0] for name in self.info.jumpChoices[1:])
+        if self.displayType.currentIndex() == 0:
+            self.choices.addItems(name[0] for name in self.info.jumpChoices[1:])
+        elif self.displayType.currentIndex() == 1:
+            for i in range(len(self.info.jumpChoices[1:])):
+                self.info.getChoice(i)
+                if self.info.choiceActive:
+                    self.choices.addItem(self.info.jumpChoices[1:][i][0])
+                    self.memory[len(self.memory)] = i
+        else:
+            for i in range(len(self.info.jumpChoices[1:])):
+                self.info.getChoice(i)
+                if self.info.choiceChained:
+                    self.choices.addItem(self.info.jumpChoices[1:][i][0])
+                    self.memory[len(self.memory)] = i
 
     def clickedJumper(self):
         if len(self.jumpers) != 0:
@@ -145,10 +174,15 @@ class UiForm(object):
 
     def clickedChoice(self):
         item = self.choices.currentItem().text()
-        self.info.getChoice(self.choices.currentRow())
+
+        if self.displayType == 0:
+            self.info.getChoice(self.choices.currentRow())
+        else:
+            self.info.getChoice(self.memory[self.choices.currentRow()])
 
         self.choiceName.setText(item)
         self.choiceCP.setText(self.info.choiceCP[:-1])
+        self.choiceCPChanged()
         self.choiceType.setCurrentIndex(self.info.choiceType)
 
         self.mainInfo.setPlainText(self.info.choiceDescription.replace('%%', '\n'))
@@ -242,10 +276,31 @@ class UiForm(object):
         elif text == 'Close Application' and self.confirm(text):
             quit()
 
+    def setEditable(self, tf):
+        tf = not tf
+        self.mainInfo.setReadOnly(tf)
+        self.secondInfo.setReadOnly(tf)
+        self.choiceType.setDisabled(tf)
+        self.chained.setDisabled(tf)
+        self.active.setDisabled(tf)
+        self.choiceCP.setReadOnly(tf)
+        self.jumpName.setReadOnly(tf)
+        self.choiceName.setReadOnly(tf)
+        self.changeType.setDisabled(tf)
+        self.changeButton.setDisabled(tf)
+
     @staticmethod
     def confirm(text):
         check = QtWidgets.QMessageBox
         return check.Yes == check.question(QtWidgets.QWidget(), 'Confirmation Question', 'Are you sure you want to {}?'.format(text.lower()), check.Yes | check.No, check.No)
+
+    def clickedDisplayType(self):
+        index = self.displayType.currentIndex()
+        if index == 0:
+            self.setEditable(True)
+        else:
+            self.setEditable(False)
+        self.getChoices()
 
     def jumpNameChanged(self):
         index = self.choices.currentRow()
