@@ -58,7 +58,7 @@ class UiForm(object):
         # Creating the widgets
         setup_widget(self.jumpers, self.ratio_alter(10, 10, 75, 14), 'jumpers')
 
-        setup_widget(self.jumps, self.ratio_alter(10, 48, 75, 360.5), 'jumps')
+        setup_widget(self.jumps, self.ratio_alter(10, 48, 75, 341.5), 'jumps')
         setup_widget(self.jumpName, self.ratio_alter(170, 29, 100, 14), 'jumpName')
         setup_widget(self.jumpCP, self.ratio_alter(170, 10, 75, 14), 'jumpCP')
         self.jumpCP.setReadOnly(True)
@@ -296,6 +296,7 @@ class UiForm(object):
 
     def clickedDisplayType(self):
         index = self.displayType.currentIndex()
+        self.memory = {}
         if index == 0:
             self.setEditable(True)
         else:
