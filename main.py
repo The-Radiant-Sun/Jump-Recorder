@@ -15,4 +15,5 @@ class RunApplication:
         sys.exit(app.exec_())
 
 
-RunApplication()
+if __name__ == '__main__':
+    RunApplication()
