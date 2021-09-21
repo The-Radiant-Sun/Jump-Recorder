@@ -318,10 +318,11 @@ class UiForm(object):
         self.changeButton.setText(self.changeType.currentText())
 
     def mainInfoChanged(self):
+        pastInfo = self.info.choiceDescription
         try:
             self.info.changeDescription(self.choices.currentRow(), self.mainInfo.toPlainText().replace('\n', '%%'))
         except Exception:
-            self.mainInfo.setPlainText(self.info.choiceDescription)
+            self.mainInfo.setPlainText(pastInfo)
 
     def secondInfoChanged(self):
         self.info.changeNotes(self.choices.currentRow(), self.secondInfo.toPlainText().replace('\n', '%%'))

@@ -92,8 +92,9 @@ class Info:
 
     def backupJumper(self):
         backupPath = self.pathConnect("Info/Backup/Jumpers", self.jumperPath.split('/')[-1])
-        if not os.path.exists(backupPath):
-            os.makedirs(backupPath)
+        if os.path.exists(backupPath):
+            os.rmdir(backupPath)
+        os.makedirs(backupPath)
         record = self.jump
         for jump in self.jumps:
             self.jump = self.pathConnect(self.jumperPath, '{}.csv'.format(jump))
@@ -102,7 +103,7 @@ class Info:
         self.jump = record
 
     def renameJumper(self, newName):
-        if newName[1] == True and newName[0] != '':
+        if newName[1] and newName[0] != '':
             try:
                 self.file.close()
                 newPath = self.pathConnect(self.path, newName[0])
