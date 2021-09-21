@@ -8,6 +8,7 @@ FileOrder = ['Name', 'Type', 'CP Change', 'Active', 'Chained', 'Description', 'N
 FileTree = ['Info/Jumpers', 'Info/Backup/Jumpers', 'Info/Backup/Jumps']
 
 
+# noinspection PyPep8Naming,PyAttributeOutsideInit
 class Info:
     def __init__(self):
         for tree in FileTree:
@@ -78,7 +79,7 @@ class Info:
         self.backups = os.listdir(FileTree[2])
 
     def addJumper(self, jumperName):
-        if jumperName[1] == True:
+        if jumperName[1]:
             try:
                 os.makedirs(self.pathConnect(self.path, jumperName[0]))
                 self.jumperPath = self.pathConnect(self.path, jumperName[0])
@@ -127,7 +128,7 @@ class Info:
             self.file.write("Name,,Type,,CP Change,,Active,,Chained,,Description,,Notes\nStarting CP,,6,,10000,,True,,False,,,,")
             self.getJumps()
         except FileExistsError:
-            "Do Nothing"
+            pass
 
     def getJump(self, row, jump):
         self.jump = self.pathConnect(self.jumperPath, "{}__{}.csv".format(self.getLength(str(row)), jump))
@@ -153,7 +154,7 @@ class Info:
         try:
             self.file = open(backupPath, mode='x')
         except FileExistsError:
-            "Continue"
+            pass
         record = self.jump
         self.jump = backupPath
         self.writeJumpChoices()
@@ -200,8 +201,8 @@ class Info:
                 jumpID = int(jump.split('__')[0])
                 if jumpID > int(self.jump.split('/')[-1].split('__')[0]):
                     os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, '{}__{}.csv'.format(self.getLength(str(jumpID - 1)), jump.split('__')[1])))
-        except Exception:
-            "Do nothing"
+        except Exception as Error:
+            print(Error)
 
     def getJumpChoices(self):
         try:

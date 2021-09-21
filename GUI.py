@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtWidgets
 from Info import Info
 
 
+# noinspection PyPep8Naming
 class UiForm(object):
     def __init__(self, form):
         self.info = Info()
@@ -143,16 +144,11 @@ class UiForm(object):
         self.choices.clear()
         if self.displayType.currentIndex() == 0:
             self.choices.addItems(name[0] for name in self.info.jumpChoices[1:])
-        elif self.displayType.currentIndex() == 1:
-            for i in range(len(self.info.jumpChoices[1:])):
-                self.info.getChoice(i)
-                if self.info.choiceActive:
-                    self.choices.addItem(self.info.jumpChoices[1:][i][0])
-                    self.memory[len(self.memory)] = i
+
         else:
             for i in range(len(self.info.jumpChoices[1:])):
                 self.info.getChoice(i)
-                if self.info.choiceChained:
+                if self.info.choiceChained if self.displayType.currentIndex() == 1 else self.info.choiceActive:
                     self.choices.addItem(self.info.jumpChoices[1:][i][0])
                     self.memory[len(self.memory)] = i
 
