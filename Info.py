@@ -93,9 +93,15 @@ class Info:
 
     def backupJumper(self):
         backupPath = self.pathConnect("Info/Backup/Jumpers", self.jumperPath.split('/')[-1])
-        if os.path.exists(backupPath):
-            os.rmdir(backupPath)
-        os.makedirs(backupPath)
+        try:
+            if os.path.exists(backupPath):
+                for root, dirs, files in os.walk(backupPath):
+                    for file in files:
+                        os.remove(os.path.join(root, file))
+            else:
+                os.makedirs(backupPath)
+        except Exception as Error:
+            print(Error)
         record = self.jump
         for jump in self.jumps:
             self.jump = self.pathConnect(self.jumperPath, '{}.csv'.format(jump))

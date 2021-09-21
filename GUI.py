@@ -124,7 +124,6 @@ class UiForm(object):
         self.choices.setCurrentRow(0)
         self.clickedChoice()
 
-
     def getJumpers(self):
         self.jumpers.clear()
         self.jumpers.addItems(self.info.jumpers)
@@ -171,7 +170,7 @@ class UiForm(object):
     def clickedChoice(self):
         item = self.choices.currentItem().text()
 
-        if self.displayType == 0:
+        if self.displayType.currentIndex() == 0:
             self.info.getChoice(self.choices.currentRow())
         else:
             self.info.getChoice(self.memory[self.choices.currentRow()])
