@@ -229,14 +229,16 @@ class Info:
 
     def writeJumpChoices(self):
         self.file = open(self.jump, mode='w+')
+        memory = ''
         try:
             for x, row in enumerate(self.jumpChoices):
                 for y, column in enumerate(row):
                     for char in column:
-                        try:
-                            self.file.write(char)
-                        except Exception:
-                            self.file.write('?')
+                        if char + memory != ',,':
+                            try:
+                                self.file.write(char)
+                            except Exception:
+                                self.file.write('?')
                     self.file.write(('\n' if x + 1 != len(self.jumpChoices) else '') if y + 1 == len(row) else ',,')
                     self.file.flush()
         except Exception as Error:

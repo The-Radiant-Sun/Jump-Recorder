@@ -80,9 +80,6 @@ class UiForm(object):
         setup_widget(self.mainInfo, self.ratio_alter(170, 48, 382, 251), 'mainInfo')
         setup_widget(self.secondInfo, self.ratio_alter(170, 304, 382, 85), 'secondInfo')
 
-        self.getJumpers()
-        self.getJumps()
-
         self.displayType.addItems(['Display All', 'Display Active', 'Display Chained'])
 
         self.changeType.addItems([
@@ -92,12 +89,16 @@ class UiForm(object):
             'Delete Choice', 'Delete Jump', 'Delete Jumper',
             'Close Application'
         ])
-
         self.choiceType.addItems(['Origin', 'Perk', 'Item', 'Companion', 'Drawback', 'Scenario', 'Other'])
         # Adding text to others
         self.active.setText("Active")
         self.chained.setText("Chained")
         self.changeButton.setText(self.changeType.currentText())
+
+        # Retrieving jumpers and jumps from files
+        self.getJumpers()
+        self.getJumps()
+
         # Connecting to the different widgets
         self.jumpers.currentIndexChanged.connect(self.clickedJumper)
         self.jumps.clicked.connect(self.clickedJump)
@@ -121,8 +122,6 @@ class UiForm(object):
         self.chained.stateChanged.connect(self.chainedChanged)
         # Grabbing initial values
         self.clickedJump()
-        self.choices.setCurrentRow(0)
-        self.clickedChoice()
 
     def getJumpers(self):
         self.jumpers.clear()
@@ -141,13 +140,14 @@ class UiForm(object):
 
     def getChoices(self):
         self.choices.clear()
+
         if self.displayType.currentIndex() == 0:
             self.choices.addItems(name[0] for name in self.info.jumpChoices[1:])
 
         else:
             for i in range(len(self.info.jumpChoices[1:])):
                 self.info.getChoice(i)
-                if self.info.choiceChained if self.displayType.currentIndex() == 1 else self.info.choiceActive:
+                if self.info.choiceActive if self.displayType.currentIndex() == 1 else (self.info.choiceChained and self.info.choiceActive):
                     self.choices.addItem(self.info.jumpChoices[1:][i][0])
                     self.memory[len(self.memory)] = i
 
@@ -202,7 +202,7 @@ class UiForm(object):
             self.clickedChoice()
             self.active.setChecked(False)
             self.chained.setChecked(False if self.choiceType.currentText() != 'Perk' and self.choiceType.currentText() != 'Item' else True)
-            self.choiceCP.setText('0')
+            self.choiceCP.setText('')
 
         elif text == 'Rearrange Choices':
             newPos = QtWidgets.QInputDialog.getItem(QtWidgets.QWidget(), 'Rearrange Choices', 'Move current choice to:', ["{} - {}".format(i + 1, choice[0]) for i, choice in enumerate(self.info.jumpChoices[1:])], 0, False)
@@ -290,9 +290,10 @@ class UiForm(object):
         return check.Yes == check.question(QtWidgets.QWidget(), 'Confirmation Question', 'Are you sure you want to {}?'.format(text.lower()), check.Yes | check.No, check.No)
 
     def clickedDisplayType(self):
-        index = self.displayType.currentIndex()
+        self.choices.setCurrentRow(0)
+        self.clickedChoice()
         self.memory = {}
-        if index == 0:
+        if self.displayType.currentIndex() == 0:
             self.setEditable(True)
         else:
             self.setEditable(False)
