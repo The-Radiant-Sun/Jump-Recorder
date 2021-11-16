@@ -140,7 +140,6 @@ class UiForm(object):
 
     def getChoices(self):
         self.choices.clear()
-
         if self.displayType.currentIndex() == 0:
             self.choices.addItems(name[0] for name in self.info.jumpChoices[1:])
 
@@ -301,10 +300,24 @@ class UiForm(object):
 
     def jumpNameChanged(self):
         index = self.choices.currentRow()
-        self.info.renameJump(self.jumpName.text())
-        self.jumps.currentItem().setText(self.jumpName.text())
-        self.getChoices()
-        self.choices.setCurrentRow(index)
+
+        def setName(string):
+            self.info.renameJump(string)
+            self.jumps.currentItem().setText(string)
+            self.getChoices()
+            self.choices.setCurrentRow(index)
+
+        try:
+            name = ""
+            for char in self.jumpName.text():
+                try:
+                    setName(char)
+                    name += char
+                except Exception:
+                    pass
+            setName(name)
+        except Exception as Error:
+            print("{}: {}".format(type(Error), Error))
 
     def choiceNameChanged(self):
         self.info.renameChoice(self.choices.currentRow(), self.choiceName.text())

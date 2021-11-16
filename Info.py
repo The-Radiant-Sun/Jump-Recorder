@@ -238,7 +238,8 @@ class Info:
                             try:
                                 self.file.write(char)
                             except Exception:
-                                self.file.write('?')
+                                pass
+                        memory = char
                     self.file.write(('\n' if x + 1 != len(self.jumpChoices) else '') if y + 1 == len(row) else ',,')
                     self.file.flush()
         except Exception as Error:
@@ -248,7 +249,7 @@ class Info:
         newFileOrder = ['' for order in FileOrder]
         newFileOrder[FileOrder.index('Name')] = 'Choice {}'.format(str(len(self.jumpChoices)))
         newFileOrder[FileOrder.index('Type')] = self.jumpChoices[-1][FileOrder.index('Type')]
-        newFileOrder[FileOrder.index('CP Change')] = '00'
+        newFileOrder[FileOrder.index('CP Change')] = '0'
         newFileOrder[FileOrder.index('Active')] = 'False'
         newFileOrder[FileOrder.index('Chained')] = 'False'
 
