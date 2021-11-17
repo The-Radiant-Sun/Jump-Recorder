@@ -204,7 +204,7 @@ class UiForm(object):
             self.choiceCP.setText('')
 
         elif text == 'Rearrange Choices':
-            newPos = QtWidgets.QInputDialog.getItem(QtWidgets.QWidget(), 'Rearrange Choices', 'Move current choice to:', ["{} - {}".format(i + 1, choice[0]) for i, choice in enumerate(self.info.jumpChoices[1:])], 0, False)
+            newPos = QtWidgets.QInputDialog.getItem(QtWidgets.QWidget(), 'Rearrange Choices', 'Move current choice to:', [f"{i + 1} - {choice[0]}" for i, choice in enumerate(self.info.jumpChoices[1:])], 0, False)
             if newPos[1]:
                 self.info.moveChoice(int(newPos[0].split(' - ')[0]), self.choices.currentRow() + 1)
                 self.clickedJump()
@@ -223,7 +223,7 @@ class UiForm(object):
                     self.jumps.setCurrentRow(len(self.jumps))
 
         elif text == 'Rearrange Jumps':
-            newPos = QtWidgets.QInputDialog.getItem(QtWidgets.QWidget(), 'Rearrange Current Jump', 'Move current jump to:', ["{} - {}".format(str(int(jump.split('__')[0])), jump.split("__")[1]) for jump in self.info.jumps], 0, False)
+            newPos = QtWidgets.QInputDialog.getItem(QtWidgets.QWidget(), 'Rearrange Current Jump', 'Move current jump to:', [f"{str(int(jump.split('__')[0]))} - {jump.split('__')[1]}" for jump in self.info.jumps], 0, False)
             if newPos[1]:
                 self.info.moveJump(self.jumps.currentRow() + 1, int(newPos[0].split(' - ')[0]))
                 self.getJumps()
@@ -251,19 +251,19 @@ class UiForm(object):
                 self.jumpers.setCurrentIndex(self.info.jumpers.index(newName[1]))
                 self.clickedJumper()
 
-        elif text == 'Delete Jumper' and self.confirm(text) and len(self.jumpers) != 0:
+        elif text == 'Delete Jumper' and self.confirm(f"{text}: {self.jumpers.currentText()}") and len(self.jumpers) != 0:
             self.info.deleteJumper()
             self.getJumpers()
             self.jumpers.setCurrentIndex(0)
 
-        elif text == 'Delete Jump' and len(self.jumps) > 1 and self.confirm(text):
+        elif text == 'Delete Jump' and len(self.jumps) > 1 and self.confirm(f"{text}: {self.jumps.currentItem().text()}"):
             currentRow = self.jumps.currentRow()
             self.info.deleteJump()
             self.getJumps()
             self.jumps.setCurrentRow(currentRow if currentRow < len(self.jumps) else len(self.jumps) - 1)
             self.clickedJump()
 
-        elif text == 'Delete Choice' and self.confirm(text):
+        elif text == 'Delete Choice' and self.confirm(f"{text}: {self.choices.currentItem().text()}"):
             self.info.deleteChoice(self.choices.currentRow())
             self.getChoices()
 
@@ -286,7 +286,7 @@ class UiForm(object):
     @staticmethod
     def confirm(text):
         check = QtWidgets.QMessageBox
-        return check.Yes == check.question(QtWidgets.QWidget(), 'Confirmation Question', 'Are you sure you want to {}?'.format(text.lower()), check.Yes | check.No, check.No)
+        return check.Yes == check.question(QtWidgets.QWidget(), 'Confirmation Question', f'Are you sure you want to {text.lower()}?', check.Yes | check.No, check.No)
 
     def clickedDisplayType(self):
         self.choices.setCurrentRow(0)
@@ -317,7 +317,7 @@ class UiForm(object):
                     pass
             setName(name)
         except Exception as Error:
-            print("{}: {}".format(type(Error), Error))
+            print(f"{type(Error)}: {Error}")
 
     def choiceNameChanged(self):
         self.info.renameChoice(self.choices.currentRow(), self.choiceName.text())

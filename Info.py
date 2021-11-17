@@ -104,7 +104,7 @@ class Info:
             print(Error)
         record = self.jump
         for jump in self.jumps:
-            self.jump = self.pathConnect(self.jumperPath, '{}.csv'.format(jump))
+            self.jump = self.pathConnect(self.jumperPath, f'{jump}.csv')
             self.getJumpChoices()
             self.backupJump(True)
         self.jump = record
@@ -129,7 +129,7 @@ class Info:
 
     def addJump(self):
         try:
-            self.jump = self.pathConnect(self.jumperPath, '{}__New Jump {}.csv'.format(self.getLength(str(len(self.jumps) + 1)), str(len(self.jumps) + 1)))
+            self.jump = self.pathConnect(self.jumperPath, f"{self.getLength(str(len(self.jumps) + 1))}__New Jump {str(len(self.jumps) + 1)}.csv")
             self.file = open(self.jump, mode='x')
             self.file.write("Name,,Type,,CP Change,,Active,,Chained,,Description,,Notes\nStarting CP,,6,,10000,,True,,False,,,,")
             self.getJumps()
@@ -137,18 +137,18 @@ class Info:
             pass
 
     def getJump(self, row, jump):
-        self.jump = self.pathConnect(self.jumperPath, "{}__{}.csv".format(self.getLength(str(row)), jump))
+        self.jump = self.pathConnect(self.jumperPath, f"{self.getLength(str(row))}__{jump}.csv")
         self.getJumpChoices()
 
     def renameJump(self, newName):
         try:
             self.file.close()
-            newName = "{}__{}.csv".format(self.jump.split('/')[-1].split('__')[0], newName)
+            newName = f'{self.jump.split("/")[-1].split("__")[0]}__{newName}.csv'
             os.rename(self.jump, self.pathConnect(self.jumperPath, newName))
             self.jump = self.pathConnect(self.jumperPath, newName)
             self.getJumpChoices()
         except TypeError as Error:
-            print(Error)
+            print(f"{type(Error)}: {Error}")
 
     def backupJump(self, toJumper):
         if toJumper:
@@ -156,11 +156,13 @@ class Info:
         else:
             backupPath = self.pathConnect("Info/Backup/Jumps", self.jump.split('/')[-1].split('__')[-1])
             backupPath = backupPath.split('.')
-            backupPath = "{} - {}.{}".format(backupPath[0], self.jumperPath.split('/')[-1], backupPath[1])
+            backupPath = f"{backupPath[0]} - {self.jumperPath.split('/')[-1]}.{backupPath[1]}"
+
         try:
             self.file = open(backupPath, mode='x')
         except FileExistsError:
             pass
+
         record = self.jump
         self.jump = backupPath
         self.writeJumpChoices()
@@ -171,7 +173,7 @@ class Info:
         try:
             self.jump = self.pathConnect(FileTree[2], jump + '.csv')
             self.getJumpChoices()
-            self.jump = self.pathConnect(self.jumperPath, '{}__{}.csv'.format(self.getLength(str(len(self.jumps) + 1)), jump))
+            self.jump = self.pathConnect(self.jumperPath, f'{self.getLength(str(len(self.jumps) + 1))}__{jump}.csv')
             self.file = open(self.jump, mode='x')
             self.writeJumpChoices()
             self.getJumps()
@@ -188,12 +190,12 @@ class Info:
                 if jumpID == oldPos:
                     continue
                 if oldPos > jumpID > newPos:
-                    os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, '{}__{}.csv'.format(self.getLength(str(jumpID + 1)), jump.split('__')[1])))
+                    os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, f'{self.getLength(str(jumpID + 1))}__{jump.split("__")[1]}.csv'))
                 if oldPos < jumpID < newPos:
-                    os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, '{}__{}.csv'.format(self.getLength(str(jumpID - 1)), jump.split('__')[1])))
+                    os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, f'{self.getLength(str(jumpID - 1))}__{jump.split("__")[1]}.csv'))
                 if jumpID == newPos:
-                    os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, '{}__{}.csv'.format(self.getLength(str(jumpID + (-1 if int(self.jump.split('/')[-1].split('__')[0]) == 1 else 1))), jump.split('__')[1])))
-            os.rename(self.pathConnect(self.jumperPath, '0__' + self.jump.split('__')[1]), self.pathConnect(self.jumperPath, '{}__{}'.format(self.getLength(str(newPos)), self.jump.split('__')[1])))
+                    os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, f'{self.getLength(str(jumpID + (-1 if int(self.jump.split("/")[-1].split("__")[0]) == 1 else 1)))}__{jump.split("__")[1]}.csv'))
+            os.rename(self.pathConnect(self.jumperPath, '0__' + self.jump.split('__')[1]), self.pathConnect(self.jumperPath, f'{self.getLength(str(newPos))}__{self.jump.split("__")[1]}'))
             self.getJumps()
         except Exception as Error:
             print(Error)
@@ -206,9 +208,9 @@ class Info:
             for jump in self.jumps:
                 jumpID = int(jump.split('__')[0])
                 if jumpID > int(self.jump.split('/')[-1].split('__')[0]):
-                    os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, '{}__{}.csv'.format(self.getLength(str(jumpID - 1)), jump.split('__')[1])))
+                    os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, f'{self.getLength(str(jumpID - 1))}__{jump.split("__")[1]}.csv'))
         except Exception as Error:
-            print(Error)
+            print(f"{type(Error)}: {Error}")
 
     def getJumpChoices(self):
         try:
@@ -221,7 +223,7 @@ class Info:
                     self.jumpChoices[i] = option.split(',,')
             self.writeJumpChoices()
         except Exception as Error:
-            print(Error)
+            print(f"{type(Error)}: {Error}")
 
     def changeJumpChoices(self, choice, section, new):
         self.jumpChoices[choice + 1][FileOrder.index(section)] = str(new)
@@ -243,11 +245,11 @@ class Info:
                     self.file.write(('\n' if x + 1 != len(self.jumpChoices) else '') if y + 1 == len(row) else ',,')
                     self.file.flush()
         except Exception as Error:
-            print(Error)
+            print(f"{type(Error)}: {Error}")
 
     def addChoice(self):
         newFileOrder = ['' for order in FileOrder]
-        newFileOrder[FileOrder.index('Name')] = 'Choice {}'.format(str(len(self.jumpChoices)))
+        newFileOrder[FileOrder.index('Name')] = f'Choice {str(len(self.jumpChoices))}'
         newFileOrder[FileOrder.index('Type')] = self.jumpChoices[-1][FileOrder.index('Type')]
         newFileOrder[FileOrder.index('CP Change')] = '0'
         newFileOrder[FileOrder.index('Active')] = 'False'
@@ -267,7 +269,7 @@ class Info:
             self.choiceDescription = choice[FileOrder.index('Description')]
             self.choiceNotes = choice[FileOrder.index('Notes')]
         except Exception as Error:
-            print(Error)
+            print(f"{type(Error)}: {Error}")
 
     def moveChoice(self, newPos, oldPos):
         try:
@@ -280,7 +282,7 @@ class Info:
             self.jumpChoices = changed
             self.writeJumpChoices()
         except Exception as Error:
-            print(Error)
+            print(f"{type(Error)}: {Error}")
 
     def deleteChoice(self, choice):
         self.getJumpChoices()
