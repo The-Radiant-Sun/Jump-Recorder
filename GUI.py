@@ -160,12 +160,12 @@ class UiForm(object):
             self.clickedJump()
 
     def clickedJump(self):
-        self.info.getJump(self.jumps.currentRow() + 1, self.jumps.currentItem().text())
-        self.jumpName.setText(self.jumps.currentItem().text())
-        self.getChoices()
-        self.choices.setCurrentRow(0)
-        self.clickedChoice()
-        self.jumpCP.setText(self.info.jumpCP)
+            self.info.getJump(self.jumps.currentRow() + 1, self.jumps.currentItem().text())
+            self.jumpName.setText(self.jumps.currentItem().text())
+            self.getChoices()
+            self.choices.setCurrentRow(0)
+            self.clickedChoice()
+            self.jumpCP.setText(self.info.jumpCP)
 
     def clickedChoice(self):
         item = self.choices.currentItem().text()
@@ -202,7 +202,7 @@ class UiForm(object):
             self.choices.setCurrentRow(len(self.choices) - 1)
             self.clickedChoice()
             self.active.setChecked(False)
-            self.chained.setChecked(True if self.choiceType.currentText() in ['Perk', 'Item', 'Scenario'] else False)
+            self.chained.setChecked(True if self.choiceType.currentText() in ['Perk', 'Item', 'Scenario', 'Companion'] else False)
             self.choiceCP.setText('0')
 
         elif text == 'Rearrange Choices':
@@ -222,7 +222,7 @@ class UiForm(object):
                 newJump = self.info.importJump(newJump[0])
                 if newJump:
                     self.getJumps()
-                    self.jumps.setCurrentRow(len(self.jumps))
+                    self.jumps.setCurrentRow(len(self.jumps) - 1)
                     self.clickedJump()
 
         elif text == 'Rearrange Jumps':
