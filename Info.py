@@ -148,7 +148,7 @@ class Info:
             self.jump = self.pathConnect(self.jumperPath, newName)
             self.getJumpChoices()
         except TypeError as Error:
-            print(f"{type(Error)}: {Error}")
+            print(f"Rename Jump, Info.py, {type(Error)}: {Error}")
 
     def backupJump(self, toJumper):
         if toJumper:
@@ -210,7 +210,7 @@ class Info:
                 if jumpID > int(self.jump.split('/')[-1].split('__')[0]):
                     os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, f'{self.getLength(str(jumpID - 1))}__{jump.split("__")[1]}.csv'))
         except Exception as Error:
-            print(f"{type(Error)}: {Error}")
+            print(f"Delete Jump, Info.py, {type(Error)}: {Error}")
 
     def getJumpChoices(self):
         try:
@@ -223,7 +223,7 @@ class Info:
                     self.jumpChoices[i] = option.split(',,')
             self.writeJumpChoices()
         except Exception as Error:
-            print(f"{type(Error)}: {Error}")
+            print(f"Get Jump Choices, Info.py, {type(Error)}: {Error}")
 
     def changeJumpChoices(self, choice, section, new):
         self.jumpChoices[choice + 1][FileOrder.index(section)] = str(new)
@@ -245,7 +245,7 @@ class Info:
                     self.file.write(('\n' if x + 1 != len(self.jumpChoices) else '') if y + 1 == len(row) else ',,')
                     self.file.flush()
         except Exception as Error:
-            print(f"{type(Error)}: {Error}")
+            print(f"Write Jump Choices, Info.py, {type(Error)}: {Error}")
 
     def addChoice(self):
         newFileOrder = ['' for order in FileOrder]
@@ -269,7 +269,11 @@ class Info:
             self.choiceDescription = choice[FileOrder.index('Description')]
             self.choiceNotes = choice[FileOrder.index('Notes')]
         except Exception as Error:
-            print(f"{type(Error)}: {Error}")
+            print(f"Get Choice, Info.py, {type(Error)}: {Error}")
+            try:
+                print(f"Error on choice {self.jumpChoices[choice + 1][FileOrder.index('Name')]}")
+            except Exception as Error:
+                print(f"Unable to load choice: {type(Error)}: {Error}")
 
     def moveChoice(self, newPos, oldPos):
         try:
@@ -282,7 +286,7 @@ class Info:
             self.jumpChoices = changed
             self.writeJumpChoices()
         except Exception as Error:
-            print(f"{type(Error)}: {Error}")
+            print(f"Move Choice, Info.py, {type(Error)}: {Error}")
 
     def deleteChoice(self, choice):
         self.getJumpChoices()

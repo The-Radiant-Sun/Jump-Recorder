@@ -145,7 +145,6 @@ class UiForm(object):
             self.choices.addItems(name[0] for name in choices)
 
         else:
-            self.getMemory()
             for key in self.memory:
                 for name in choices:
                     if self.memory[key] == choices.index(name):
@@ -168,24 +167,26 @@ class UiForm(object):
             self.jumpCP.setText(self.info.jumpCP)
 
     def clickedChoice(self):
-        item = self.choices.currentItem().text()
+        try:
+            item = self.choices.currentItem().text()
 
-        if self.displayType.currentIndex() == 0:
-            self.info.getChoice(self.choices.currentRow())
-        else:
-            self.getMemory()
-            self.info.getChoice(self.memory[self.choices.currentRow()])
+            if self.displayType.currentIndex() == 0:
+                self.info.getChoice(self.choices.currentRow())
+            else:
+                self.info.getChoice(self.memory[self.choices.currentRow()])
 
-        self.choiceName.setText(item)
-        self.choiceCP.setText(self.info.choiceCP[:-1])
-        self.choiceCPChanged()
-        self.choiceType.setCurrentIndex(self.info.choiceType)
+            self.choiceName.setText(item)
+            self.choiceCP.setText(self.info.choiceCP[:-1])
+            self.choiceCPChanged()
+            self.choiceType.setCurrentIndex(self.info.choiceType)
 
-        self.mainInfo.setPlainText(self.info.choiceDescription.replace('%%', '\n'))
-        self.secondInfo.setPlainText(self.info.choiceNotes.replace('%%', '\n'))
+            self.mainInfo.setPlainText(self.info.choiceDescription.replace('%%', '\n'))
+            self.secondInfo.setPlainText(self.info.choiceNotes.replace('%%', '\n'))
 
-        self.active.setChecked(self.info.choiceActive)
-        self.chained.setChecked(self.info.choiceChained)
+            self.active.setChecked(self.info.choiceActive)
+            self.chained.setChecked(self.info.choiceChained)
+        except Exception as Error:
+            print(f"Clicked Choice, GUI.py, {type(Error)}: {Error}")
 
     def clickedChangeButton(self):
         text = self.changeType.currentText()
@@ -230,7 +231,7 @@ class UiForm(object):
             if newPos[1]:
                 self.info.moveJump(self.jumps.currentRow() + 1, int(newPos[0].split(' - ')[0]))
                 self.getJumps()
-                self.jumps.setCurrentRow(int(newPos[0].split(' - ')[0]))
+                self.jumps.setCurrentRow(int(newPos[0].split(' - ')[0]) - 1)
                 self.clickedJump()
 
         elif text == 'Add Jumper':
@@ -292,22 +293,32 @@ class UiForm(object):
         return check.Yes == check.question(QtWidgets.QWidget(), 'Confirmation Question', f'Are you sure you want to {text.lower()}?', check.Yes | check.No, check.No)
 
     def getMemory(self):
-        self.memory = {}
-        for i in range(len(self.info.jumpChoices[1:])):
-            self.info.getChoice(i)
-            if self.info.choiceActive if self.displayType.currentIndex() == 1 else (self.info.choiceChained and self.info.choiceActive):
-                self.memory[len(self.memory)] = i
-        if len(self.memory) == 0:
-            self.memory[0] = 0
+        try:
+            self.memory = {}
+            for i in range(len(self.info.jumpChoices[1:])):
+                try:
+                    self.info.getChoice(i)
+                    if self.info.choiceActive if self.displayType.currentIndex() == 1 else (self.info.choiceChained and self.info.choiceActive):
+                        self.memory[len(self.memory)] = i
+                except Exception as Error:
+                    print(f"Get Memory, GUI.py, {type(Error)}: {Error}")
+            if len(self.memory) == 0:
+                self.memory[0] = 0
+        except Exception as Error:
+            print(f"Get Memory, GUI.py, {type(Error)}: {Error}")
 
     def clickedDisplayType(self):
-        self.choices.setCurrentRow(0)
-        self.clickedChoice()
-        if self.displayType.currentIndex() == 0:
-            self.setEditable(True)
-        else:
-            self.setEditable(False)
-        self.getChoices()
+        try:
+            self.getMemory()
+            self.choices.setCurrentRow(0)
+            self.clickedChoice()
+            if self.displayType.currentIndex() == 0:
+                self.setEditable(True)
+            else:
+                self.setEditable(False)
+            self.getChoices()
+        except Exception as Error:
+            print(f"Clicked Display Type, GUI.py, {type(Error)}: {Error}")
 
     def jumpNameChanged(self):
         if self.displayType.currentIndex() == 0:
@@ -329,7 +340,7 @@ class UiForm(object):
                         pass
                 setName(name)
             except Exception as Error:
-                print(f"{type(Error)}: {Error}")
+                print(f"Jump Name Changed, GUI.py, {type(Error)}: {Error}")
 
     def choiceNameChanged(self):
         if self.displayType.currentIndex() == 0:
