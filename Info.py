@@ -6,6 +6,7 @@ import subprocess
 FileOrder = ['Name', 'Type', 'CP Change', 'Active', 'Chained', 'Description', 'Notes']
 
 FileTree = ['Info/Jumpers', 'Info/Backup/Jumpers', 'Info/Backup/Jumps']
+FileExtension = '.txt'
 
 
 # noinspection PyPep8Naming,PyAttributeOutsideInit
@@ -104,7 +105,7 @@ class Info:
             print(Error)
         record = self.jump
         for jump in self.jumps:
-            self.jump = self.pathConnect(self.jumperPath, f'{jump}.csv')
+            self.jump = self.pathConnect(self.jumperPath, f'{jump}{FileExtension}')
             self.getJumpChoices()
             self.backupJump(True)
         self.jump = record
@@ -129,7 +130,7 @@ class Info:
 
     def addJump(self):
         try:
-            self.jump = self.pathConnect(self.jumperPath, f"{self.getLength(str(len(self.jumps) + 1))}__New Jump {str(len(self.jumps) + 1)}.csv")
+            self.jump = self.pathConnect(self.jumperPath, f"{self.getLength(str(len(self.jumps) + 1))}__New Jump {str(len(self.jumps) + 1)}{FileExtension}")
             self.file = open(self.jump, mode='x')
             self.file.write("Name,,Type,,CP Change,,Active,,Chained,,Description,,Notes\nStarting CP,,6,,10000,,True,,False,,,,")
             self.getJumps()
@@ -137,13 +138,13 @@ class Info:
             pass
 
     def getJump(self, row, jump):
-        self.jump = self.pathConnect(self.jumperPath, f"{self.getLength(str(row))}__{jump}.csv")
+        self.jump = self.pathConnect(self.jumperPath, f"{self.getLength(str(row))}__{jump}{FileExtension}")
         self.getJumpChoices()
 
     def renameJump(self, newName):
         try:
             self.file.close()
-            newName = f'{self.jump.split("/")[-1].split("__")[0]}__{newName}.csv'
+            newName = f'{self.jump.split("/")[-1].split("__")[0]}__{newName}{FileExtension}'
             os.rename(self.jump, self.pathConnect(self.jumperPath, newName))
             self.jump = self.pathConnect(self.jumperPath, newName)
             self.getJumpChoices()
@@ -171,9 +172,9 @@ class Info:
 
     def importJump(self, jump):
         try:
-            self.jump = self.pathConnect(FileTree[2], jump + '.csv')
+            self.jump = self.pathConnect(FileTree[2], jump + FileExtension)
             self.getJumpChoices()
-            self.jump = self.pathConnect(self.jumperPath, f'{self.getLength(str(len(self.jumps) + 1))}__{jump}.csv')
+            self.jump = self.pathConnect(self.jumperPath, f'{self.getLength(str(len(self.jumps) + 1))}__{jump}{FileExtension}')
             self.file = open(self.jump, mode='x')
             self.writeJumpChoices()
             self.getJumps()
@@ -190,11 +191,11 @@ class Info:
                 if jumpID == oldPos:
                     continue
                 if oldPos > jumpID > newPos:
-                    os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, f'{self.getLength(str(jumpID + 1))}__{jump.split("__")[1]}.csv'))
+                    os.rename(self.pathConnect(self.jumperPath, jump + FileExtension), self.pathConnect(self.jumperPath, f'{self.getLength(str(jumpID + 1))}__{jump.split("__")[1]}{FileExtension}'))
                 if oldPos < jumpID < newPos:
-                    os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, f'{self.getLength(str(jumpID - 1))}__{jump.split("__")[1]}.csv'))
+                    os.rename(self.pathConnect(self.jumperPath, jump + FileExtension), self.pathConnect(self.jumperPath, f'{self.getLength(str(jumpID - 1))}__{jump.split("__")[1]}{FileExtension}'))
                 if jumpID == newPos:
-                    os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, f'{self.getLength(str(jumpID + (-1 if int(self.jump.split("/")[-1].split("__")[0]) == 1 else 1)))}__{jump.split("__")[1]}.csv'))
+                    os.rename(self.pathConnect(self.jumperPath, jump + FileExtension), self.pathConnect(self.jumperPath, f'{self.getLength(str(jumpID + (-1 if int(self.jump.split("/")[-1].split("__")[0]) == 1 else 1)))}__{jump.split("__")[1]}{FileExtension}'))
             os.rename(self.pathConnect(self.jumperPath, '0__' + self.jump.split('__')[1]), self.pathConnect(self.jumperPath, f'{self.getLength(str(newPos))}__{self.jump.split("__")[1]}'))
             self.getJumps()
         except Exception as Error:
@@ -208,7 +209,7 @@ class Info:
             for jump in self.jumps:
                 jumpID = int(jump.split('__')[0])
                 if jumpID > int(self.jump.split('/')[-1].split('__')[0]):
-                    os.rename(self.pathConnect(self.jumperPath, jump + '.csv'), self.pathConnect(self.jumperPath, f'{self.getLength(str(jumpID - 1))}__{jump.split("__")[1]}.csv'))
+                    os.rename(self.pathConnect(self.jumperPath, jump + FileExtension), self.pathConnect(self.jumperPath, f'{self.getLength(str(jumpID - 1))}__{jump.split("__")[1]}{FileExtension}'))
         except Exception as Error:
             print(f"Delete Jump, Info.py, {type(Error)}: {Error}")
 

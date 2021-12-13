@@ -38,10 +38,10 @@ class UiForm(object):
 
     def ratio_alter(self, x, y, width, height):
         """Return coordinates and dimensions altered by the form size"""
-        alter_x = self.width_ratio * x
-        alter_y = self.height_ratio * y
-        alter_width = self.width_ratio * width
-        alter_height = self.height_ratio * height
+        alter_x = round(self.width_ratio * x)
+        alter_y = round(self.height_ratio * y)
+        alter_width = round(self.width_ratio * width)
+        alter_height = round(self.height_ratio * height)
         return QtCore.QRect(alter_x, alter_y, alter_width, alter_height)
 
     def setup_ui(self, form):
@@ -203,7 +203,7 @@ class UiForm(object):
             self.choices.setCurrentRow(len(self.choices) - 1)
             self.clickedChoice()
             self.active.setChecked(False)
-            self.chained.setChecked(True if self.choiceType.currentText() in ['Perk', 'Item', 'Scenario', 'Companion'] else False)
+            self.chained.setChecked(True if self.choiceType.currentText() in ['Perk', 'Item', 'Scenario', 'Companion', 'Other'] else False)
             self.choiceCP.setText('0')
 
         elif text == 'Rearrange Choices':
