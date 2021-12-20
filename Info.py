@@ -26,7 +26,7 @@ class Info:
             os.makedirs('Info/Jumpers/Jumper 1')
             self.getJumpers()
             try:
-                open(self.pathConnect(self.path, self.jumpers[0]), mode='x').write("Name,,Type,,CP Change,,Active,,Chained,,Description,,Notes\nStarting CP,,6,,1000,,True,,False,,,,")
+                open(self.pathConnect(self.path, self.jumpers[0]), mode='x', errors='replace').write("Name,,Type,,CP Change,,Active,,Chained,,Description,,Notes\nStarting CP,,6,,1000,,True,,False,,,,")
             except PermissionError:
                 subprocess.call([sys.executable, os.path.realpath(__file__)] + sys.argv[1:])
 
@@ -71,6 +71,13 @@ class Info:
 
     def getJumps(self):
         self.jumps = self.remove(os.listdir(self.jumperPath), 4)
+        removal = []
+        for i in range(len(self.jumps)):
+            if len(self.jumps[i].split('__')[0]) != 8:
+                removal.append(i)
+
+        for item in [removal[-value] for value in range(len(removal))]:
+            del self.jumps[item]
 
     def getJumper(self, jumper):
         self.jumperPath = self.pathConnect(self.path, jumper)
@@ -131,7 +138,7 @@ class Info:
     def addJump(self):
         try:
             self.jump = self.pathConnect(self.jumperPath, f"{self.getLength(str(len(self.jumps) + 1))}__New Jump {str(len(self.jumps) + 1)}{FileExtension}")
-            self.file = open(self.jump, mode='x')
+            self.file = open(self.jump, mode='x', errors='replace')
             self.file.write("Name,,Type,,CP Change,,Active,,Chained,,Description,,Notes\nStarting CP,,6,,10000,,True,,False,,,,")
             self.getJumps()
         except FileExistsError:
@@ -160,7 +167,7 @@ class Info:
             backupPath = f"{backupPath[0]} - {self.jumperPath.split('/')[-1]}.{backupPath[1]}"
 
         try:
-            self.file = open(backupPath, mode='x')
+            self.file = open(backupPath, mode='x', errors='replace')
         except FileExistsError:
             pass
 
@@ -175,7 +182,7 @@ class Info:
             self.jump = self.pathConnect(FileTree[2], jump + FileExtension)
             self.getJumpChoices()
             self.jump = self.pathConnect(self.jumperPath, f'{self.getLength(str(len(self.jumps) + 1))}__{jump}{FileExtension}')
-            self.file = open(self.jump, mode='x')
+            self.file = open(self.jump, mode='x', errors='replace')
             self.writeJumpChoices()
             self.getJumps()
             return True
@@ -215,7 +222,7 @@ class Info:
 
     def getJumpChoices(self):
         try:
-            self.file = open(self.jump, mode='r')
+            self.file = open(self.jump, mode='r', errors='replace')
             self.jumpChoices = self.file.readlines()
             for i, option in enumerate(self.jumpChoices):
                 if option != self.jumpChoices[-1]:
@@ -231,7 +238,7 @@ class Info:
         self.writeJumpChoices()
 
     def writeJumpChoices(self):
-        self.file = open(self.jump, mode='w+')
+        self.file = open(self.jump, mode='w+', errors='replace')
         memory = ''
         try:
             for x, row in enumerate(self.jumpChoices):

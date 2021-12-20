@@ -62,6 +62,7 @@ class UiForm(object):
         setup_widget(self.jumps, self.ratio_alter(10, 48, 75, 341.5), 'jumps')
         setup_widget(self.jumpName, self.ratio_alter(170, 29, 100, 14), 'jumpName')
         setup_widget(self.jumpCP, self.ratio_alter(170, 10, 75, 14), 'jumpCP')
+        self.jumpName.setReadOnly(True)
         self.jumpCP.setReadOnly(True)
 
         setup_widget(self.displayType, self.ratio_alter(10, 29, 75, 14), 'displayType')
@@ -84,10 +85,10 @@ class UiForm(object):
 
         self.changeType.addItems([
             'Add Jump', 'Add Choice', 'Rearrange Choices',
-            'Backup Jump', 'Import Jump', 'Rearrange Jumps',
-            'Add Jumper', 'Backup Jumper', 'Rename Jumper',
-            'Delete Choice', 'Delete Jump', 'Delete Jumper',
-            'Close Application'
+            'Backup Jump', 'Import Jump', 'Rename Jump',
+            'Rearrange Jumps', 'Add Jumper', 'Backup Jumper',
+            'Rename Jumper', 'Delete Choice', 'Delete Jump',
+            'Delete Jumper', 'Close Application'
         ])
         self.choiceType.addItems(['Origin', 'Perk', 'Item', 'Companion', 'Drawback', 'Scenario', 'Other'])
         # Adding text to others
@@ -108,8 +109,6 @@ class UiForm(object):
 
         self.changeType.currentIndexChanged.connect(self.clickedChangeType)
         self.changeButton.clicked.connect(self.clickedChangeButton)
-
-        self.jumpName.textChanged.connect(self.jumpNameChanged)
 
         self.choiceName.textChanged.connect(self.choiceNameChanged)
         self.choiceType.currentIndexChanged.connect(self.choiceTypeChanged)
@@ -226,6 +225,30 @@ class UiForm(object):
                     self.jumps.setCurrentRow(len(self.jumps) - 1)
                     self.clickedJump()
 
+        elif text == 'Rename Jump':
+            newName = QtWidgets.QInputDialog.getText(QtWidgets.QWidget(), 'Rename Jump', 'New name for Jump:')
+            if newName[1]:
+                index = self.choices.currentRow()
+
+                def setName(string):
+                    self.info.renameJump(string)
+                    self.jumpName.setText(string)
+                    self.jumps.currentItem().setText(string)
+                    self.getChoices()
+                    self.choices.setCurrentRow(index)
+
+                try:
+                    name = ""
+                    for char in newName[0]:
+                        try:
+                            setName(char)
+                            name += char
+                        except Exception:
+                            pass
+                    setName(name)
+                except Exception as Error:
+                    print(f"Jump Name Changed, GUI.py, {type(Error)}: {Error}")
+
         elif text == 'Rearrange Jumps':
             newPos = QtWidgets.QInputDialog.getItem(QtWidgets.QWidget(), 'Rearrange Current Jump', 'Move current jump to:', [f"{str(int(jump.split('__')[0]))} - {jump.split('__')[1]}" for jump in self.info.jumps], 0, False)
             if newPos[1]:
@@ -319,28 +342,6 @@ class UiForm(object):
             self.getChoices()
         except Exception as Error:
             print(f"Clicked Display Type, GUI.py, {type(Error)}: {Error}")
-
-    def jumpNameChanged(self):
-        if self.displayType.currentIndex() == 0:
-            index = self.choices.currentRow()
-
-            def setName(string):
-                self.info.renameJump(string)
-                self.jumps.currentItem().setText(string)
-                self.getChoices()
-                self.choices.setCurrentRow(index)
-
-            try:
-                name = ""
-                for char in self.jumpName.text():
-                    try:
-                        setName(char)
-                        name += char
-                    except Exception:
-                        pass
-                setName(name)
-            except Exception as Error:
-                print(f"Jump Name Changed, GUI.py, {type(Error)}: {Error}")
 
     def choiceNameChanged(self):
         if self.displayType.currentIndex() == 0:
