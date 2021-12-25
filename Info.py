@@ -1,6 +1,5 @@
-import os
-import sys
-import subprocess
+import os, sys, subprocess
+from datetime import date
 
 
 FileOrder = ['Name', 'Type', 'CP Change', 'Active', 'Chained', 'Description', 'Notes']
@@ -53,8 +52,8 @@ class Info:
 
     @staticmethod
     def remove(group, digits):
-        for unit in group:
-            group[group.index(unit)] = unit[:-digits]
+        for i, unit in enumerate(group):
+            group[i] = unit[:-digits]
         return group
 
     @staticmethod
@@ -70,14 +69,14 @@ class Info:
         self.jumpers = os.listdir(self.path)
 
     def getJumps(self):
-        self.jumps = self.remove(os.listdir(self.jumperPath), 4)
-        removal = []
-        for i in range(len(self.jumps)):
-            if len(self.jumps[i].split('__')[0]) != 8:
-                removal.append(i)
+        self.jumps = sorted(self.remove(os.listdir(self.jumperPath), 4))
 
-        for item in [removal[-value] for value in range(len(removal))]:
-            del self.jumps[item]
+        for jump in list(self.jumps):
+            try:
+                if len(jump.split('__')[0]) != 8:
+                    del self.jumps[self.jumps.index(jump)]
+            except Exception:
+                del self.jumps[self.jumps.index(jump)]
 
     def getJumper(self, jumper):
         self.jumperPath = self.pathConnect(self.path, jumper)
@@ -100,7 +99,8 @@ class Info:
         return False
 
     def backupJumper(self):
-        backupPath = self.pathConnect("Info/Backup/Jumpers", self.jumperPath.split('/')[-1])
+        backupPath = self.pathConnect("Info/Backup/Jumpers", f"{self.jumperPath.split('/')[-1]} Backup at {date.today().strftime('%b-%d-%Y')}")
+
         try:
             if os.path.exists(backupPath):
                 for root, dirs, files in os.walk(backupPath):
@@ -110,6 +110,7 @@ class Info:
                 os.makedirs(backupPath)
         except Exception as Error:
             print(Error)
+
         record = self.jump
         for jump in self.jumps:
             self.jump = self.pathConnect(self.jumperPath, f'{jump}{FileExtension}')

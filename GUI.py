@@ -150,20 +150,29 @@ class UiForm(object):
                         self.choices.addItem(name[0])
 
     def clickedJumper(self):
-        if len(self.jumpers) != 0:
-            self.jumps.clear()
-            self.info.getJumper(self.jumpers.currentText())
-            self.getJumps()
-            self.jumps.setCurrentRow(0)
-            self.clickedJump()
+        def baseAction():
+            if len(self.jumpers) != 0:
+                self.jumps.clear()
+                self.choices.clear()
+                self.info.getJumper(self.jumpers.currentText())
+                self.getJumps()
+                self.jumps.setCurrentRow(0)
+                self.clickedJump()
+        try:
+            baseAction()
+        except Exception:
+            try:
+                baseAction()
+            except Exception as Error:
+                print(f"Clicked Jumper, GUI.py, {type(Error)}: {Error}")
 
     def clickedJump(self):
-            self.info.getJump(self.jumps.currentRow() + 1, self.jumps.currentItem().text())
-            self.jumpName.setText(self.jumps.currentItem().text())
-            self.getChoices()
-            self.choices.setCurrentRow(0)
-            self.clickedChoice()
-            self.jumpCP.setText(self.info.jumpCP)
+        self.info.getJump(self.jumps.currentRow() + 1, self.jumps.currentItem().text())
+        self.jumpName.setText(self.jumps.currentItem().text())
+        self.getChoices()
+        self.choices.setCurrentRow(0)
+        self.clickedChoice()
+        self.jumpCP.setText(self.info.jumpCP)
 
     def clickedChoice(self):
         try:
