@@ -99,7 +99,7 @@ class Info:
         return False
 
     def backupJumper(self):
-        backupPath = self.pathConnect("Info/Backup/Jumpers", f"{self.jumperPath.split('/')[-1]} Backup at {date.today().strftime('%b-%d-%Y')}")
+        backupPath = '/'.join(["Info/Backup/Jumpers", self.jumperPath.split('/')[-1], date.today().strftime('%b-%d-%Y')])
 
         try:
             if os.path.exists(backupPath):
@@ -161,7 +161,7 @@ class Info:
 
     def backupJump(self, toJumper):
         if toJumper:
-            backupPath = self.pathConnect("Info/Backup/Jumpers", self.jump.split('/')[-2] + '/' + self.jump.split('/')[-1])
+            backupPath = '/'.join(["Info/Backup/Jumpers/", self.jumperPath.split('/')[-1], date.today().strftime('%b-%d-%Y'), self.jump.split('/')[-1]])
         else:
             backupPath = self.pathConnect("Info/Backup/Jumps", self.jump.split('/')[-1].split('__')[-1])
             backupPath = backupPath.split('.')
