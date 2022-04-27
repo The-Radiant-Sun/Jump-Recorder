@@ -226,7 +226,7 @@ class UiForm(object):
             self.info.backupJump(False)
 
         elif text == 'Import Jump' and len(self.info.backups) != 0:
-            newJump = QtWidgets.QInputDialog.getItem(QtWidgets.QWidget(), 'Import Jump', 'Import Jump:', [backup[:-4] for backup in self.info.backups], 0, False)
+            newJump = QtWidgets.QInputDialog.getItem(QtWidgets.QWidget(), 'Import Jump', 'Import Jump:', [backup[:-4] for backup in sorted(self.info.backups)], 0, False)
             if newJump[1]:
                 newJump = self.info.importJump(newJump[0])
                 if newJump:
@@ -235,7 +235,7 @@ class UiForm(object):
                     self.clickedJump()
 
         elif text == 'Rename Jump':
-            newName = QtWidgets.QInputDialog.getText(QtWidgets.QWidget(), 'Rename Jump', 'New name for Jump:')
+            newName = QtWidgets.QInputDialog.getText(QtWidgets.QWidget(), 'Rename Jump', 'New name for Jump:', text=self.jumps.currentItem().text())
             if newName[1]:
                 index = self.choices.currentRow()
 
