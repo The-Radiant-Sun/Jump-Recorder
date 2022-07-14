@@ -1,6 +1,8 @@
 import os, sys, subprocess
 from datetime import date
-
+# Issue with full jumper back up with renamed jumps
+# Replace ,, with more secure separation
+# Make second choice be origin non-chained instead of other chained
 
 FileOrder = ['Name', 'Type', 'CP Change', 'Active', 'Chained', 'Description', 'Notes']
 
